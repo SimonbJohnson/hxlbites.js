@@ -747,7 +747,6 @@ let hxlBites = {
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
 		});
 		var bite = this.getBite(biteID);
-		console.log(bite);
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
 		newBites = [];
@@ -760,8 +759,8 @@ let hxlBites = {
 		}
 		if(bite.type=='cross table'){
 			let variables = self._getCrossTableVariables(self._data,bite,matchingValues);
-			let newBite = [self._generateCrossTableBite(bite.table,variables)];
-			newBite[0].title = 'Crosstable';
+			newBites = [self._generateCrossTableBite(bite.table,variables)];
+			newBites[0].title = 'Crosstable';
 		}						
 		if(bite.type=='map'){
 			let tag = bite.ingredients[0].tags[0];
@@ -833,7 +832,6 @@ let hxlBites = {
 		bite.ingredients.forEach(function(ingredient){
 			matchingValues[ingredient.name] = [];
 		});
-		console.log(cols);
 		cols.forEach(function(col){
 			//only match tags not attributes - improve in future - probably works 99% of the time
 			bite.ingredients.forEach(function(ingredient){
