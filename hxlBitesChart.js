@@ -119,5 +119,27 @@ hxlBites._chartBites = [
 'chart':'',
 'title':'Count of {1}',
 'priority': 8,
-}
+},
+{
+'id':'chart0012',
+'type':'chart',
+'subType':'row',
+'ingredients':[{'name':'who','tags':['#org-id']}],
+'criteria':['who > 10'],
+'variables': ['who', 'count()'],
+'chart':'rows(10)',
+'title':'Top 10 of {1} by count',
+'priority': 8,
+},
+{
+'id':'chart0013',
+'type':'chart',
+'subType':'row',
+'ingredients':[{'name':'who','tags':['#org-id-code']},{'name':'value','tags':['#value','#reached']}],
+'criteria':['who > 10'],
+'variables': ['who', 'sum(value)'],
+'chart':'rows(10)',
+'title':'Top 10 of {1} by {2}',
+'priority': 8,
+},
 ];
