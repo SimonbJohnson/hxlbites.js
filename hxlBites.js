@@ -148,7 +148,7 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-				let tag = bite.ingredients[0].tags[0];
+				let tag = matchingValues.where[0].tag;
 				let location = null;
 				let level = -1;
 				if(tag=='#country+code'){
@@ -157,12 +157,19 @@ let hxlBites = {
 				if(tag=='#adm1+code'){
 					level = 1;
 				}
+				if(tag=='#adm2+code'){
+					level = 2;
+				}
+				if(tag=='#adm3+code'){
+					level = 3;
+				}							
 				if(level>-1){
 					//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 					//let titles = self._generateTextBite(bite.title,titleVariables);
 					let keyVariable = bite.variables[0]
 					let values = matchingValues[keyVariable][0].values;
 					let mapCheck = self._checkMapCodes(level,values);
+					console.log(mapCheck);
 					if(mapCheck.percent>0.5){
 						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 						let newBites = self._generateMapBite(bite.map,variables,location,level);
@@ -619,13 +626,18 @@ let hxlBites = {
 				let func=chart.split('(')[0];
 				if(func=='rows'){
 					let value = parseInt(chart.split('(')[1].split(')')[0]);
+					var topRow = chartData.shift();
+					chartData.sort(function(a,b){
+						return b[1] - a[1];
+					});
+					chartData.unshift(topRow);					
 					chartData = chartData.filter(function(row,i){
 						if(i<value+1){
 							return true;
 						} else {
 							return false;
 						}
-					}) ;
+					});
 				}
 			}
 			let bite = {'bite':chartData,'uniqueID':variables.uniqueID,'title':variables.title};
@@ -746,7 +758,7 @@ let hxlBites = {
 			columns[i].values = self.getValues(self._data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
 		});
-		var bite = this.getBite(biteID);
+		var bite = this.getBite(biteID)
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
 		newBites = [];
@@ -761,7 +773,8 @@ let hxlBites = {
 			let variables = self._getCrossTableVariables(self._data,bite,matchingValues);
 			newBites = [self._generateCrossTableBite(bite.table,variables)];
 			newBites[0].title = 'Crosstable';
-		}						
+		}
+		var mapCheck;						
 		if(bite.type=='map'){
 			let tag = bite.ingredients[0].tags[0];
 			let location = null;
@@ -777,7 +790,7 @@ let hxlBites = {
 				//let titles = self._generateTextBite(bite.title,titleVariables);
 				let keyVariable = bite.variables[0]
 				let values = matchingValues[keyVariable][0].values;
-				let mapCheck = self._checkMapCodes(level,values);
+				mapCheck = self._checkMapCodes(level,values);
 				if(mapCheck.percent>0.5){			
 					newBites = self._generateMapBite(bite.chart,variables);
 				}
@@ -785,6 +798,10 @@ let hxlBites = {
 		}		
 		newBites.forEach(function(newBite,i){
 			bites.push({'type':bite.type,'subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
+			if(bite.type=='map'){
+				bites[i].geom_url=mapCheck.url;
+				bites[i].geom_attribute=mapCheck.code;
+			}
 		});
 		return bites[0];
 

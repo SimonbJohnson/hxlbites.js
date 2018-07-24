@@ -61,12 +61,14 @@ hxlBites.render = function(_id,_bite){
 		html += '</tr></tbody></table>';
 		return html;
 	}
-
+	if(_id!=null){
+		_id = _id.substring(1);
+	}
 	if(_bite.type == 'table'){
 		if(_id == null){
 			return _tableToHTML(_bite.bite);
 		} else {
-			document.getElementById(_id).insertAdjacentHTML(_tableToHTML(_bite.bite));
+			document.getElementById(_id).insertAdjacentHTML("beforeend",_tableToHTML(_bite.bite));
 		}		
 	}
 
@@ -74,7 +76,7 @@ hxlBites.render = function(_id,_bite){
 		if(_id == null){
 			return _crossTableToHTML(_bite.bite);
 		} else {
-			document.getElementById(_id).insertAdjacentHTML(_tableToHTML(_bite.bite));
+			document.getElementById(_id).insertAdjacentHTML("beforeend",_crossTableToHTML(_bite.bite));
 		}		
 	}
 }

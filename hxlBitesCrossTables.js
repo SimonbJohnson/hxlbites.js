@@ -1,7 +1,7 @@
 hxlBites._crossTableBites = [
 {
 'id':'cross0001',
-'type':'cross table',
+'type':'crosstable',
 'subType':'',
 'ingredients':[{'name':'where','tags':['#country-code','#region-code','#adm1-code','#adm2-code','#adm3-code','#adm4-code','#loc-code']},{'name':'indicator','tags':['#indicator','#severity','#status']},{'name':'value','tags':['#value','#affected']}],
 'criteria':['where > 1','where < 11','indicator > 1','indicator < 11','value ! 0'],
@@ -12,7 +12,7 @@ hxlBites._crossTableBites = [
 },
 {
 'id':'cross0002',
-'type':'cross table',
+'type':'crosstable',
 'subType':'',
 'ingredients':[{'name':'where','tags':['#country-code','#region-code','#adm1-code','#adm2-code','#adm3-code','#adm4-code','#loc-code']},{'name':'indicator','tags':['#indicator','#severity','#status']},{'name':'value','tags':['#value','#affected']}],
 'criteria':['where > 1','where < 11','indicator > 1','indicator < 11','value ! 0'],
@@ -23,7 +23,7 @@ hxlBites._crossTableBites = [
 },
 {
 'id':'cross0003',
-'type':'cross table',
+'type':'crosstable',
 'subType':'',
 'ingredients':[{'name':'where','tags':['#country-code','#region-code','#adm1-code','#adm2-code','#adm3-code','#adm4-code','#loc-code']},{'name':'indicator','tags':['#indicator','#severity','#status']},{'name':'value','tags':['#value','#affected']}],
 'criteria':['where > 1','where < 11','indicator > 1','indicator < 11','value ! 0'],
@@ -34,7 +34,7 @@ hxlBites._crossTableBites = [
 },
 {
 'id':'cross0004',
-'type':'cross table',
+'type':'crosstable',
 'subType':'',
 'ingredients':[{'name':'where','tags':['#country-code','#region-code','#adm1-code','#adm2-code','#adm3-code','#adm4-code','#loc-code']},{'name':'indicator','tags':['#indicator','#severity','#status']},{'name':'value','tags':['#value','#affected']}],
 'criteria':['where > 1','where < 11','indicator > 1','indicator < 11'
