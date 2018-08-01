@@ -153,7 +153,7 @@ let hxlBites = {
 						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 						let newBites = self._generateMapBite(bite.map,variables);
 						newBites.forEach(function(newBite,i){
-							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.url,'geom_attribute':newBite.code});
+							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute});
 						});
 			}		
 		});
@@ -647,7 +647,7 @@ let hxlBites = {
 				values = v.table[0].slice(1, v.table[0].length-1);
 				let mapCheck = self._checkMapCodes(level,values);
 				if(mapCheck.percent>0.5){	
-					let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title};
+					let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url};
 					bites.push(bite);
 				}
 			}
