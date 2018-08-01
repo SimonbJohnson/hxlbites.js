@@ -26,9 +26,9 @@
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
         console.log(output);
-        if(output.length>1){
+        if(output.length>2){
           console.error('Map Test Fail: Too many results');
-        } else if (output[0].uniqueID != 'map0001/#country+code/2') {
+        } else if (output[0].uniqueID != 'map0002/#country+code/2/#population+hh+idps/5') {
           console.error('Map Test Fail: Unexpected ID');
           console.log(output[0].uniqueID);
         } else {
