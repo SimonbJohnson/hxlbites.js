@@ -853,13 +853,11 @@ let hxlBites = {
 					});
 				});	*/	
 				newBites = self._generateMapBite(bite.chart,variables);
-				console.log(newBites);
 			}
 		}		
 		newBites.forEach(function(newBite,i){
 			bites.push({'type':bite.type,'subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
 			if(bite.type=='map'){
-				console.log(newBite);
 				bites[i].geom_url=newBite.geom_url;
 				bites[i].geom_attribute=newBite.geom_attribute;
 			}
