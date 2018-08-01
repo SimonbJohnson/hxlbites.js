@@ -502,29 +502,85 @@ let hxlBites = {
 	},
 
 	_checkMapCodes: function(level,values){
-		let maxMatch = 0;
-		let maxURL = '';
-		let maxName = '';
-		let maxCode = '';
-		hxlBites._mapValues.forEach(function(geomMeta){
-			geomMeta.codes.forEach(function(code){
-				let match = 0;
-				values.forEach(function(value,i){
-					if(code.values.indexOf(value)>-1){
-						match++;
+
+
+		worldgeos = hxlBites._mapValues.world;
+		codCodes = hxlBites._mapValues.cod;
+
+		/*var urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
+        var url = urlPattern.replace("{{country}}", countryCode.toUpperCase());
+        url = url.replace("{{level}}", levelId);*/
+
+		if(level==0){
+			let maxMatch = 0;
+			let maxURL = '';
+			let maxName = '';
+			let maxCode = '';
+			worldgeos.forEach(function(geomMeta){
+				geomMeta.codes.forEach(function(code){
+					let match = 0;
+					values.forEach(function(value,i){
+						if(code.values.indexOf(value)>-1){
+							match++;
+						}
+					});
+					if(match>maxMatch){
+						maxMatch=match;
+						maxURL = geomMeta.url;
+						maxName = geomMeta.name;
+						maxCode = code.name;
 					}
 				});
-				if(match>maxMatch){
-					maxMatch=match;
-					maxURL = geomMeta.url;
-					maxName = geomMeta.name;
-					maxCode = code.name;
-				}
 			});
-		});
-		let matchPercent = maxMatch/values.length;
-		let unmatched = values.length - maxMatch;
-		return {'unmatched':unmatched,'percent':matchPercent,'code':maxCode,'name':maxName,'url':maxURL};
+			let matchPercent = maxMatch/values.length;
+			let unmatched = values.length - maxMatch;
+			return {'code':maxCode,'name':maxName,'url':[maxURL],'clean':[]};
+		}
+		if(level>0){
+			let iso3Codes = [];
+			let pcodeClean = [];
+			let parsed = [];
+			values.forEach(function(d){
+				let iso3 = isNaN(d.substring(2,3));
+				if(iso3){
+					countryCode = d.substring(0,3);
+				} else {
+					countryCode = d.substring(0,2);
+				}
+				if(parsed.indexOf(countryCode)==-1){
+					parsed.push(countryCode);
+					if(iso3){
+						codCodes.forEach(function(code){
+							if(code.iso3==countryCode){
+								iso3Codes.push(code.iso3);
+								if(code.iso3!=code.use){
+									pcodeClean.push([code.iso3,code.use]);
+								}
+							}
+						});
+					} else {
+						codCodes.forEach(function(code){
+							if(code.iso2==countryCode){
+								iso3Codes.push(code.iso3);
+								if(code.iso2!=code.use){
+									pcodeClean.push([code.iso2,code.use]);
+								}
+							}
+						});						
+					}
+				}
+			})
+			let urls = [];
+			let urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
+			iso3Codes.forEach(function(d){
+		        var url = urlPattern.replace("{{country}}", d.toUpperCase());
+		        url = url.replace("{{level}}", level+1);
+		        urls.push(url);
+			});
+			return {'code':'cod','name':'code','url':urls,'clean':pcodeClean};			
+		}
+		return false
+
 	},
 
 	//change later to form every iteration
@@ -646,10 +702,13 @@ let hxlBites = {
 			if(level>-1){
 				values = v.table[0].slice(1, v.table[0].length-1);
 				let mapCheck = self._checkMapCodes(level,values);
-				if(mapCheck.percent>0.5){	
-					let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url};
-					bites.push(bite);
-				}
+				mapCheck.clean.forEach(function(c){
+					mapData.forEach(function(d){
+						d[0] = d[0].replace(c[0],c[1]);
+					});
+				});
+				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url};
+				bites.push(bite);
 			}
 		});
 		return bites;
@@ -787,9 +846,12 @@ let hxlBites = {
 				let keyVariable = bite.variables[0]
 				let values = matchingValues[keyVariable][0].values;
 				mapCheck = self._checkMapCodes(level,values);
-				if(mapCheck.percent>0.5){			
-					newBites = self._generateMapBite(bite.chart,variables);
-				}
+				mapCheck.clean.forEach(function(c){
+					mapData.forEach(function(d){
+						d[0] = d[0].replace(c[0],c[1]);
+					});
+				});		
+				newBites = self._generateMapBite(bite.chart,variables);
 			}
 		}		
 		newBites.forEach(function(newBite,i){

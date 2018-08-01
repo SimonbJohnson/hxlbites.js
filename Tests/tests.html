@@ -26,7 +26,7 @@
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
         console.log(output);
-        if(output.length>2){
+        if(output.length>4){
           console.error('Map Test Fail: Too many results');
         } else if (output[0].uniqueID != 'map0002/#country+code/2/#population+hh+idps/5') {
           console.error('Map Test Fail: Unexpected ID');
@@ -34,6 +34,11 @@
         } else {
           console.log('Map Test Pass');
         }
+
+        let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#population+hh+idps/5');
+        console.log(bite);
+        bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#population+idps+ind/6');
+        console.log(bite);
       },
       error: function(err){
         console.log(err);
