@@ -577,7 +577,8 @@ let hxlBites = {
 		        url = url.replace("{{level}}", level+1);
 		        urls.push(url);
 			});
-			return {'code':'cod','name':'code','url':urls,'clean':pcodeClean};			
+			code = 'admin'+(level)+'Pcode'
+			return {'code':code,'name':'cod','url':urls,'clean':pcodeClean};			
 		}
 		return false
 
@@ -831,7 +832,7 @@ let hxlBites = {
 		}
 		var mapCheck;						
 		if(bite.type=='map'){
-			let tag = bite.ingredients[0].tags[0];
+			let tag = columns[0].tag;
 			let location = null;
 			let level = -1;
 			if(tag=='#country+code'){
@@ -845,20 +846,22 @@ let hxlBites = {
 				//let titles = self._generateTextBite(bite.title,titleVariables);
 				let keyVariable = bite.variables[0]
 				let values = matchingValues[keyVariable][0].values;
-				mapCheck = self._checkMapCodes(level,values);
-				mapCheck.clean.forEach(function(c){
+				//mapCheck = self._checkMapCodes(level,values);
+				/*mapCheck.clean.forEach(function(c){
 					mapData.forEach(function(d){
 						d[0] = d[0].replace(c[0],c[1]);
 					});
-				});		
+				});	*/	
 				newBites = self._generateMapBite(bite.chart,variables);
+				console.log(newBites);
 			}
 		}		
 		newBites.forEach(function(newBite,i){
 			bites.push({'type':bite.type,'subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
 			if(bite.type=='map'){
-				bites[i].geom_url=mapCheck.url;
-				bites[i].geom_attribute=mapCheck.code;
+				console.log(newBite);
+				bites[i].geom_url=newBite.geom_url;
+				bites[i].geom_attribute=newBite.geom_attribute;
 			}
 		});
 		return bites[0];
