@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Tests</title>
+    <script src="../hxl.js"></script>
+    <script src="../hxlBites.js"></script>
+    <script src="../hxlBitesChart.js"></script>
+    <script src="../hxlBitesCrossTables.js"></script>
+    <script src="../hxlBitesMap.js"></script>
+    <script src="../hxlBitesRender.js"></script>
+    <script src="../hxlBitesTable.js"></script>
+    <script src="../hxlBitesText.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <p>Open console to see tests</p>
+  </body>
+  <script>
+    console.log('Running Tests');
+  	$.ajax({
+  		url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
+  		success: function(result){
+        let output = hxlBites.data(result).getMapBites();
+        console.log(output);
+        if(output.length>1){
+          console.error('Map Test Fail: Too many results');
+        } else if (output[0].uniqueID != 'map0001/#country+code/2') {
+          console.error('Map Test Fail: Unexpected ID');
+          console.log(output[0].uniqueID);
+        } else {
+          console.log('Map Test Pass');
+        }
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
+  </script>
+</html>
