@@ -148,36 +148,13 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-				let tag = matchingValues.where[0].tag;
-				let location = null;
-				let level = -1;
-				if(tag=='#country+code'){
-					level = 0;
-				}
-				if(tag=='#adm1+code'){
-					level = 1;
-				}
-				if(tag=='#adm2+code'){
-					level = 2;
-				}
-				if(tag=='#adm3+code'){
-					level = 3;
-				}							
-				if(level>-1){
-					//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
-					//let titles = self._generateTextBite(bite.title,titleVariables);
-					let keyVariable = bite.variables[0]
-					let values = matchingValues[keyVariable][0].values;
-					let mapCheck = self._checkMapCodes(level,values);
-					console.log(mapCheck);
-					if(mapCheck.percent>0.5){
+						//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
+						//let titles = self._generateTextBite(bite.title,titleVariables);
 						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
-						let newBites = self._generateMapBite(bite.map,variables,location,level);
+						let newBites = self._generateMapBite(bite.map,variables);
 						newBites.forEach(function(newBite,i){
-							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':mapCheck.url,'geom_attribute':mapCheck.code});
+							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.url,'geom_attribute':newBite.code});
 						});
-					}
-				}
 			}		
 		});
 		return bites;
@@ -646,15 +623,34 @@ let hxlBites = {
 		return bites
 	},
 
-
-	//use better way to get tags that does not grab first tag.
-	_generateMapBite: function(map,variables,location,level){
+	_generateMapBite: function(map,variables){
 		let self = this;
 		let bites = [];
 		variables.forEach(function(v){
 			let mapData = self._transposeTable(v.table);
-			let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title};
-			bites.push(bite);
+			let tag = v.uniqueID.split('/')[1];
+			let location = null;
+			let level = -1;
+			if(tag=='#country+code'){
+				level = 0;
+			}
+			if(tag=='#adm1+code'){
+				level = 1;
+			}
+			if(tag=='#adm2+code'){
+				level = 2;
+			}
+			if(tag=='#adm3+code'){
+				level = 3;
+			}							
+			if(level>-1){
+				values = v.table[0].slice(1, v.table[0].length-1);
+				let mapCheck = self._checkMapCodes(level,values);
+				if(mapCheck.percent>0.5){	
+					let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title};
+					bites.push(bite);
+				}
+			}
 		});
 		return bites;
 	},
