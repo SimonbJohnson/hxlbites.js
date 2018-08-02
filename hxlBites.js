@@ -574,7 +574,7 @@ let hxlBites = {
 			let urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
 			iso3Codes.forEach(function(d){
 		        var url = urlPattern.replace("{{country}}", d.toUpperCase());
-		        url = url.replace("{{level}}", level+1);
+		        url = url.replace("{{level}}", level);
 		        urls.push(url);
 			});
 			code = 'admin'+(level)+'Pcode'
