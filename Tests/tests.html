@@ -37,12 +37,27 @@
 
         let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#population+hh+idps/5');
         console.log(bite);
+        bite = hxlBites.data(result).reverse('chart0009/#country+name/1/#population+hh+idps/5');
+        console.log(bite);
         bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#population+idps+ind/6');
         console.log(bite);
+
       },
       error: function(err){
         console.log(err);
       }
     });
+    $.ajax({
+      url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
+      success: function(result){
+        let output = hxlBites.data(result).getTextBites();
+        console.log(output);
+        console.log("Text bites success");
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
+
   </script>
 </html>

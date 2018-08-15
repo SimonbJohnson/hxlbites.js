@@ -494,7 +494,10 @@ let hxlBites = {
 				}
 				if(func == 'secondCount'){
 					items.push(self._varFuncSortPositionCount(match,1));
-				}				
+				}
+				if(func == 'sum'){
+					items.push(self._varFuncSum(match));
+				}									
 			});
 			variableList.push(items);
 		});
@@ -732,6 +735,11 @@ let hxlBites = {
 	_varFuncCount: function(match){
 		return '<span class="hbvalue">'+match.uniqueValues.length+'</span>';
 	},
+
+	_varFuncSum: function(match){
+		var sum = match.values.reduce((a, b) => a + b, 0);
+		return '<span class="hbvalue">'+sum+'</span>';
+	},	
 
 	_varFuncSingle: function(match){
 		return '<span class="hbvalue">'+match.uniqueValues[0]+'</span>';
