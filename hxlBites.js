@@ -737,7 +737,7 @@ let hxlBites = {
 	},
 
 	_varFuncSum: function(match){
-		var sum = match.values.reduce((a, b) => a + b, 0);
+		var sum = match.values.reduce((a, b) => a + (isNaN(Number(b)) ? 0 : Number(b)), 0);
 		return '<span class="hbvalue">'+sum+'</span>';
 	},	
 
