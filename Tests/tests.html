@@ -53,7 +53,10 @@
       success: function(result){
         let output = hxlBites.data(result).getTextBites();
         console.log(output);
+        output = hxlBites.data(result).reverse('text0012/#population+idps+ind/6');
+        console.log(output);
         console.log("Text bites success");
+
       },
       error: function(err){
         console.log(err);

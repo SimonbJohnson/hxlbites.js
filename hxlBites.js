@@ -831,7 +831,22 @@ let hxlBites = {
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
 		newBites = [];
-		let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+		let uniqueID = '';
+		if(bite.type!='text'){
+			let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+		} else {
+			bite.ingredients.forEach(function(ingredient){
+				matchingValues[ingredient.name].forEach(function(match){
+					uniqueID = bite.id+'/'+match.tag+'/'+match.col;
+				})
+			});
+			let variables = self._getVariables(bite,matchingValues);
+			newBites = [{'bite':self._generateTextBite(bite.phrase,variables)}];
+			newBites[0].uniqueID = uniqueID;
+		}
+		if(bite.type=='chart'){
+			newBites = self._generateChartBite(bite.chart,variables);
+		}		
 		if(bite.type=='chart'){
 			newBites = self._generateChartBite(bite.chart,variables);
 		}
@@ -900,7 +915,12 @@ let hxlBites = {
 			if(b.id==id){
 				bite = b;
 			}
-		});								
+		});
+		hxlBites._textBites.forEach(function(b){
+			if(b.id==id){
+				bite = b;
+			}
+		});										
 		return bite;
 	},
 
