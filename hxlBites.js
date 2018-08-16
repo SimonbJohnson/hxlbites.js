@@ -49,7 +49,7 @@ let hxlBites = {
 		let self = this;
 		let bites = [];
 		if(this.timeSeries){
-			bites.push({'type':'text','subtype':'intro','priority':10,'bite':'Data filtered for on '+this.timeSeriesFilterHeader+' for '+this.timeSeriesFilter, 'id':'text0000'});
+			bites.push({'type':'text','subtype':'intro','priority':10,'bite':'Data filtered on '+this.timeSeriesFilterHeader+' for '+this.timeSeriesFilter, 'id':'text0000'});
 		}
 		this._textBites.forEach(function(bite,i){
 			let distinctOptions = {};
@@ -59,10 +59,16 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
+				let uniqueIDs = []
+				bite.ingredients.forEach(function(ingredient){
+					matchingValues[ingredient.name].forEach(function(match){
+						uniqueIDs.push(bite.id+'/'+match.tag+'/'+match.col);
+					})
+				});
 				let variables = self._getVariables(bite,matchingValues);
 				let newBites = self._generateTextBite(bite.phrase,variables);
 				newBites.forEach(function(newBite,i){
-					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':bite.id});
+					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':uniqueIDs[i]});
 				});
 				
 			}
@@ -458,7 +464,6 @@ let hxlBites = {
 	_getVariables: function(bite,matchingValues){
 
 		let self = this;
-		
 		variableList = [];
 		bite.variables.forEach(function(variable){
 			let func = variable.split('(')[0];
