@@ -843,7 +843,6 @@ let hxlBites = {
 			});
 			let variables = self._getVariables(bite,matchingValues);
 			newBites = [{'bite':self._generateTextBite(bite.phrase,variables)[0]}];
-			console.log(newBites);
 			newBites[0].uniqueID = uniqueID;
 		}
 		if(bite.type=='chart'){
