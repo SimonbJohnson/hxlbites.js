@@ -832,8 +832,9 @@ let hxlBites = {
 		var bites = [];
 		newBites = [];
 		let uniqueID = '';
+		let variables = '';
 		if(bite.type!='text'){
-			let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+			variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 		} else {
 			bite.ingredients.forEach(function(ingredient){
 				matchingValues[ingredient.name].forEach(function(match){
