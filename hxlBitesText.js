@@ -116,7 +116,7 @@ hxlBites._textBites = [
 'ingredients':[{'name':'value','tags':['#affected','#population']}],
 'criteria':['value > 0'],
 'variables': ['sum(value)','header(value)'],
-'phrase': '{1} {2}',
+'phrase': '{2}:{1}',
 'priority': 8,
 },
 {
@@ -126,7 +126,7 @@ hxlBites._textBites = [
 'ingredients':[{'name':'countries','tags':['#country-code']}],
 'criteria':['countries > 0'],
 'variables': ['count(countries)'],
-'phrase': '{1} countries',
+'phrase': 'Countries:{1}',
 'priority': 8,
 }
 ];
