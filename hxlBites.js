@@ -548,6 +548,8 @@ let hxlBites = {
 			let iso3Codes = [];
 			let pcodeClean = [];
 			let parsed = [];
+			var url = '';
+			var adjustment = '';
 			values.forEach(function(d){
 				let iso3 = isNaN(d.substring(2,3));
 				if(iso3){
@@ -560,7 +562,7 @@ let hxlBites = {
 					if(iso3){
 						codCodes.forEach(function(code){
 							if(code.iso3==countryCode){
-								iso3Codes.push(code.iso3);
+								iso3Codes.push(code);
 								if(code.iso3!=code.use){
 									pcodeClean.push([code.iso3,code.use]);
 								}
@@ -569,7 +571,7 @@ let hxlBites = {
 					} else {
 						codCodes.forEach(function(code){
 							if(code.iso2==countryCode){
-								iso3Codes.push(code.iso3);
+								iso3Codes.push(code);
 								if(code.iso2!=code.use){
 									pcodeClean.push([code.iso2,code.use]);
 								}
@@ -581,8 +583,8 @@ let hxlBites = {
 			let urls = [];
 			let urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
 			iso3Codes.forEach(function(d){
-		        var url = urlPattern.replace("{{country}}", d.toUpperCase());
-		        url = url.replace("{{level}}", level);
+		        var url = d.url.replace(/{{country}}/g, d.iso3.toUpperCase());
+		        url = url.replace("{{level}}", level+d.adjustment);
 		        urls.push(url);
 			});
 			code = 'admin'+(level)+'Pcode'
