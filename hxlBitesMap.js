@@ -29,7 +29,7 @@ hxlBites._mapValues = {'world':[
 	],
 	'cod':[
 		{'iso3':'BDI', 'iso2':'BI', 'use':'BDI', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
-		{'iso3':'MLI', 'iso2':'ML', 'use':'ML', 'url':'https://s3.amazonaws.com/itos-humanitarian/{{country}}/COD_{{country}}_Admin{{level}}.topojson','adjustment':0},
+		{'iso3':'MLI', 'iso2':'ML', 'use':'ML', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':1},
 		{'iso3':'NGA', 'iso2':'NG', 'use':'NG', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
 		{'iso3':'CAF', 'iso2':'CF', 'use':'CF', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
 		{'iso3':'BFA', 'iso2':'BF', 'use':'BF', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
