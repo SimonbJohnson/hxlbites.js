@@ -36,4 +36,7 @@ hxlBites._mapValues = {'world':[
 		{'iso3':'CIV', 'iso2':'CI', 'use':'CI', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
 		{'iso3':'COD', 'iso2':'CD', 'use':'CD', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
 		{'iso3':'COL', 'iso2':'CO', 'use':'CO', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':0},
+		{'iso3':'GIN', 'iso2':'GN', 'use':'GN', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':1},
+		{'iso3':'SLE', 'iso2':'SL', 'use':'SL', 'url':'https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson','adjustment':1},
+
 	]};

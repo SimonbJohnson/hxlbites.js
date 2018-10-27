@@ -587,6 +587,7 @@ let hxlBites = {
 		        url = url.replace("{{level}}", level+d.adjustment);
 		        urls.push(url);
 			});
+			//admin code to go in here
 			code = 'admin'+(level)+'Pcode'
 			return {'code':code,'name':'cod','url':urls,'clean':pcodeClean};			
 		}
