@@ -207,5 +207,5 @@ hxlBites._chartBites = [
 'chart':'',
 'title':'Count of {1}',
 'priority': 8,
-
+}
 ];
