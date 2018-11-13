@@ -61,6 +61,21 @@
         console.log(err);
       }
     });
+    $.ajax({
+      url: 'https://proxy.hxlstandard.org/data.json?filter01=cut&cut-include-tags01=%23modality%2C+%23channel&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1s-piTxQUT0Q8ReO6uVy-72ZFb3R9K3I5zAnb2YNN83c%2Fedit%23gid%3D1496776846',
+      success: function(result){
+        let output = hxlBites.data(result).getChartBites();
+        console.log(output);
+        if(output.length==3){
+          console.log("Modality chart bite success");
+        } else {
+          console.warn("Modality chart bite fail");
+        }
+      },
+      error: function(err){
+        console.log(err);
+      }
+    })
 
   </script>
 </html>

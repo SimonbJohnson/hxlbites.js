@@ -202,7 +202,7 @@ hxlBites._chartBites = [
 'type':'chart',
 'subType':'row',
 'ingredients':[{'name':'indicator','tags':['#modality','#channel']}],
-'criteria':['indicator > 4','indicator < 10'],
+'criteria':['indicator > 2','indicator < 10'],
 'variables': ['indicator', 'count()'],
 'chart':'',
 'title':'Count of {1}',
