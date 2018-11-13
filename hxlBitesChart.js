@@ -113,7 +113,7 @@ hxlBites._chartBites = [
 'id':'chart0011',
 'type':'chart',
 'subType':'row',
-'ingredients':[{'name':'indicator','tags':['#indicator','#severity','#status','#modality','#channel']},{'name':'value','tags':['#value','#affected','#population']}],
+'ingredients':[{'name':'indicator','tags':['#indicator','#severity','#status']},{'name':'value','tags':['#value','#affected','#population']}],
 'criteria':['indicator > 4','indicator < 10','value ! 0'],
 'variables': ['indicator', 'count()'],
 'chart':'',
@@ -196,5 +196,16 @@ hxlBites._chartBites = [
 'chart':'rows(10)',
 'title':'Top 10 of {1} by {2}',
 'priority': 8,
-}
+},
+{
+'id':'chart0019',
+'type':'chart',
+'subType':'row',
+'ingredients':[{'name':'indicator','tags':['#modality','#channel']}],
+'criteria':['indicator > 4','indicator < 10'],
+'variables': ['indicator', 'count()'],
+'chart':'',
+'title':'Count of {1}',
+'priority': 8,
+
 ];
