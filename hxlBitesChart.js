@@ -113,7 +113,7 @@ hxlBites._chartBites = [
 'id':'chart0011',
 'type':'chart',
 'subType':'row',
-'ingredients':[{'name':'indicator','tags':['#indicator','#severity','#status']},{'name':'value','tags':['#value','#affected','#population']}],
+'ingredients':[{'name':'indicator','tags':['#indicator','#severity','#status','#modality','#channel']},{'name':'value','tags':['#value','#affected','#population']}],
 'criteria':['indicator > 4','indicator < 10','value ! 0'],
 'variables': ['indicator', 'count()'],
 'chart':'',
