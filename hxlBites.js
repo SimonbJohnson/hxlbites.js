@@ -28,6 +28,13 @@ let hxlBites = {
 			if(keyValues[length-1].value<3){
 				timeSeries = false;
 			} else {
+				keyValues = keyValues.sort(function(a,b){
+					if (a.key < b.key)
+    					return -1;
+  					if (a.key > b.key)
+    					return 1;
+  					return 0;
+				});
 				filterValue = keyValues[length-1].key;
 				filterCol = match.col;
 				filterHeader = match.header;

@@ -21,7 +21,7 @@
   </body>
   <script>
     console.log('Running Tests');
-  	$.ajax({
+  	/*$.ajax({
   		url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
@@ -75,7 +75,17 @@
       error: function(err){
         console.log(err);
       }
-    })
+    });*/
+    $.ajax({
+      url: 'https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv',
+      success: function(result){
+        let output = hxlBites.data(result).getTextBites();
+        console.log(output);
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
 
   </script>
 </html>
