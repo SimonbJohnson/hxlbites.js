@@ -229,5 +229,16 @@ hxlBites._chartBites = [
 'chart':'rows(10)',
 'title':'{1} by {2}',
 'priority': 8,
+},
+{
+'id':'chart0021',
+'type':'chart',
+'subType':'row',
+'ingredients':[{'name':'where','tags':['#country-code','#region-code','#adm1-code','#adm2-code','#adm3-code','#adm4-code','#loc-code']},{'name':'value','tags':['#value','#affected','#population']}],
+'criteria':['where > 10'],
+'variables': ['where', 'sum(value)'],
+'chart':'row(10)',
+'title':'Top 10 of {2} by {1}',
+'priority': 8,
 }
 ];
