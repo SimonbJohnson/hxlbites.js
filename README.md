@@ -52,11 +52,11 @@ To get text bites
 <blockquote>hb.getTextBites();</blockquote>
 
 {
-  bite: string "...generate text string...",
+  bite: string "...generate text string...",  
   id: string "...chart bite ID...",  
   priority: number,  
   subtype: string "...bite subtype - main, headline figure...",  
-  title: undefined,
+  title: undefined,  
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure",  
 }
