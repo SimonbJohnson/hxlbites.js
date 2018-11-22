@@ -523,7 +523,6 @@ let hxlBites = {
 		/*var urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
         var url = urlPattern.replace("{{country}}", countryCode.toUpperCase());
         url = url.replace("{{level}}", levelId);*/
-        console.log(values);
 		if(level==0){
 			let maxMatch = 0;
 			let maxURL = '';
