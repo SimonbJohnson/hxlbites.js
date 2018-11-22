@@ -26,7 +26,7 @@
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
         console.log(output);
-        if(output.length>4){
+        if(output.length>8){
           console.error('Map Test Fail: Too many results');
         } else if (output[0].uniqueID != 'map0002/#country+code/2/#population+hh+idps/5') {
           console.error('Map Test Fail: Unexpected ID');
@@ -75,7 +75,7 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
       url: 'https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv',
       success: function(result){
@@ -86,6 +86,216 @@
         console.log(err);
       }
     });
+    $.ajax({
+      url: 'https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv',
+      success: function(result){
+        let output = hxlBites.data(result).getTextBites();
+        console.log(output);
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
+    $.ajax({
+      url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
+      success: function(result){
+        let output = hxlBites.data(result).getMapBites();
+        console.log(output);
+        if(output.length>8){
+          console.error('Map Test Fail: Too many results');
+        } else if (output[0].uniqueID != 'map0002/#country+code/2/#population+hh+idps/5') {
+          console.error('Map Test Fail: Unexpected ID');
+          console.log(output[0].uniqueID);
+        } else {
+          console.log('Map Test Pass');
+        }
 
+        let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#population+hh+idps/5');
+        console.log(bite);
+        bite = hxlBites.data(result).reverse('chart0009/#country+name/1/#population+hh+idps/5');
+        console.log(bite);
+        bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#population+idps+ind/6');
+        console.log(bite);
+
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    var data = [
+      [
+        "Reporting Entity",
+        "Country",
+        "Implementing National Society",
+        "Movement Partner(s)",
+        "Year",
+        "Total Assistance Budgeted",
+        "Total Assistance Expended",
+        "Total Cash Planned",
+        "Total Cash Expended",
+        "Beneficiaries Planned",
+        "Beneficiaries Actual",
+        "Project Objective (Sector)",
+        "Conditionality",
+        "Restriction",
+        "Delivery Mechanism",
+        "If other E-Cash, specify",
+        "ISO_Country_Code_Alpha3"
+      ],
+      [
+        "#org+reporting",
+        "#country+name",
+        "#org+implementing",
+        "#org+partner",
+        "#date+year",
+        "#value+total",
+        "#value+spent",
+        "#value+cash+planned",
+        "#value+cash+spent",
+        "#targeted",
+        "#reached",
+        "#sector",
+        "#modality+conditionality",
+        "#modality+restriction",
+        "#channel",
+        "#channel+ecash",
+        "#country+code"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "61921615.00",
+        "58370730.00",
+        "90757.00",
+        "90078.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "",
+        "USA"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "",
+        "12828520.00",
+        "",
+        "25117.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "",
+        "USA"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "",
+        "4044348.00",
+        "",
+        "10213.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "",
+        "USA"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "",
+        "18918900.00",
+        "",
+        "47775.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "",
+        "USA"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "",
+        "16904844.00",
+        "",
+        "42689.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "PayPal",
+        "USA"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "",
+        "155911140.00",
+        "",
+        "393715.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "Walmart",
+        "USA"
+      ],
+      [
+        "American Red Cross",
+        "United States",
+        "American Red Cross",
+        "",
+        "2017",
+        "",
+        "",
+        "",
+        "32072040.00",
+        "",
+        "80990.00",
+        "Immediate/Basic Needs",
+        "Unconditional",
+        "Unrestricted",
+        "E-cash",
+        "",
+        "USA"
+      ]
+    ];
+    let output = hxlBites.data(data).getMapBites();
+    console.log(output);
   </script>
 </html>

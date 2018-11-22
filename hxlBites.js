@@ -161,8 +161,6 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-						//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
-						//let titles = self._generateTextBite(bite.title,titleVariables);
 						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 						let newBites = self._generateMapBite(bite.map,variables);
 						newBites.forEach(function(newBite,i){
@@ -525,7 +523,7 @@ let hxlBites = {
 		/*var urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
         var url = urlPattern.replace("{{country}}", countryCode.toUpperCase());
         url = url.replace("{{level}}", levelId);*/
-
+        console.log(values);
 		if(level==0){
 			let maxMatch = 0;
 			let maxURL = '';
@@ -547,8 +545,8 @@ let hxlBites = {
 					}
 				});
 			});
-			let matchPercent = maxMatch/values.length;
-			let unmatched = values.length - maxMatch;
+			//let matchPercent = maxMatch/values.length;
+			//let unmatched = values.length - maxMatch;
 			return {'code':maxCode,'name':maxName,'url':[maxURL],'clean':[]};
 		}
 		if(level>0){
@@ -719,7 +717,7 @@ let hxlBites = {
 				level = 3;
 			}							
 			if(level>-1){
-				values = v.table[0].slice(1, v.table[0].length-1);
+				values = v.table[0].slice(1, v.table[0].length);
 				let mapCheck = self._checkMapCodes(level,values);
 				mapCheck.clean.forEach(function(c){
 					mapData.forEach(function(d){
