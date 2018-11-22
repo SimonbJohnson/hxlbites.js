@@ -67,7 +67,7 @@ hb.getCrossTableBites();
 hb.getTextBites();
 ```
 
-{
+```{
   bite: string "...generate text string...",  
   id: string "...chart bite ID...",  
   priority: number,  
@@ -75,7 +75,7 @@ hb.getTextBites();
   title: undefined,  
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure",  
-}
+}```
 
 #### To get a bite for a unique ID.
 This enables storing of just the ID and return the bite at a later date.
