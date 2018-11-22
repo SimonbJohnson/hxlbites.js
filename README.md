@@ -4,13 +4,13 @@
 
 hxlbites.js is a library to automate the generation of the relevant and context aware data structures for charts, maps, tables and text of humanitarian data with HXL hastags.
 
-Usage:
+##Usage
 
 Data should be an array of arrays - first line = headers, second line = hxl hashtags, third line onwards = data
 
 <blockquote>var hb = hxbites.data(data)</blockquote>
 
-To get mapping bites
+##To get mapping bites
 <blockquote>hb.getMapBites();</blockquote>
 
 return array of bites with following structure:
@@ -27,7 +27,7 @@ return array of bites with following structure:
   uniqueID: string "...unique ID combining bite and data structure...",  
 }
 
-To get chart bites
+##To get chart bites
 <blockquote>hb.getChartBites();</blockquote>
 
 return array of bites with following structure:
@@ -42,13 +42,13 @@ return array of bites with following structure:
   uniqueID: string "...unique ID combining bite and data structure",  
 }  
 
-To get table bites
+##To get table bites
 <blockquote>hb.getTableBites();</blockquote>
 
-To get crosstable bites
-<blockquote>hb.getCrosstableBites();</blockquote>
+##To get crosstable bites
+<blockquote>hb.getCrossTableBites();</blockquote>
 
-To get text bites
+##To get text bites
 <blockquote>hb.getTextBites();</blockquote>
 
 {
@@ -61,6 +61,7 @@ To get text bites
   uniqueID: string "...unique ID combining bite and data structure",  
 }
 
+To get a bite for a unique ID.  This enables storing of just the ID and return the bite at a later date.
 <blockquote>hb.reverse(uniqueID)</blockquote>
 
 Return single bite related to unique ID.  Data does not have to be the same and makes best attempt to recreate bite with new numbers.
