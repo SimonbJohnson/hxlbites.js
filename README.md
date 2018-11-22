@@ -13,6 +13,8 @@ var hb = hxbites.data(data)
 ```
 
 #### To get mapping bites
+hxlBitesMap.js needs to be included
+
 ```javascript
 hb.getMapBites();
 ```
@@ -34,6 +36,8 @@ return array of bites with following structure:
 ```
 
 #### To get chart bites
+hxlBitesChart.js needs to be included
+
 ```javascript
 hb.getChartBites();
 ```
@@ -53,21 +57,28 @@ return array of bites with following structure:
 ```
 
 #### To get table bites
+hxlBitesTable.js needs to be included
+
 ```javascript
 hb.getTableBites();
 ```
 
 #### To get crosstable bites
+hxlBitesCrossTable.js needs to be included
+
 ```javascript
 hb.getCrossTableBites();
 ```
 
 #### To get text bites
+hxlBitesText.js needs to be included
+
 ```javascript
 hb.getTextBites();
 ```
 
-```{
+```
+{
   bite: string "...generate text string...",  
   id: string "...chart bite ID...",  
   priority: number,  
@@ -75,10 +86,12 @@ hb.getTextBites();
   title: undefined,  
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure",  
-}```
+}
+```
 
 #### To get a bite for a unique ID.
 This enables storing of just the ID and return the bite at a later date.
+
 ```javascript
 hb.reverse(uniqueID)
 ```
