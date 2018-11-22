@@ -4,17 +4,22 @@
 
 hxlbites.js is a library to automate the generation of the relevant and context aware data structures for charts, maps, tables and text of humanitarian data with HXL hastags.
 
-##Usage
+## Usage
 
 Data should be an array of arrays - first line = headers, second line = hxl hashtags, third line onwards = data
 
-<blockquote>var hb = hxbites.data(data)</blockquote>
+```javascript
+var hb = hxbites.data(data)
+```
 
-##To get mapping bites
-<blockquote>hb.getMapBites();</blockquote>
+#### To get mapping bites
+```javascript
+hb.getMapBites();
+```
 
 return array of bites with following structure:
 
+```
 {  
   bite: array [...data for chart...],  
   geom_attribute: string "...field name in geometry file to join data by...",  
@@ -26,12 +31,16 @@ return array of bites with following structure:
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure...",  
 }
+```
 
-##To get chart bites
-<blockquote>hb.getChartBites();</blockquote>
+#### To get chart bites
+```javascript
+hb.getChartBites();
+```
 
 return array of bites with following structure:
 
+```
 {  
   bite: array [...data for chart...],  
   id: string "...chart bite ID...",  
@@ -41,15 +50,22 @@ return array of bites with following structure:
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure",  
 }  
+```
 
-##To get table bites
-<blockquote>hb.getTableBites();</blockquote>
+#### To get table bites
+```javascript
+hb.getTableBites();
+```
 
-##To get crosstable bites
-<blockquote>hb.getCrossTableBites();</blockquote>
+#### To get crosstable bites
+```javascript
+hb.getCrossTableBites();
+```
 
-##To get text bites
-<blockquote>hb.getTextBites();</blockquote>
+#### To get text bites
+```javascript
+hb.getTextBites();
+```
 
 {
   bite: string "...generate text string...",  
@@ -61,7 +77,10 @@ return array of bites with following structure:
   uniqueID: string "...unique ID combining bite and data structure",  
 }
 
-To get a bite for a unique ID.  This enables storing of just the ID and return the bite at a later date.
-<blockquote>hb.reverse(uniqueID)</blockquote>
+#### To get a bite for a unique ID.
+This enables storing of just the ID and return the bite at a later date.
+```javascript
+hb.reverse(uniqueID)
+```
 
 Return single bite related to unique ID.  Data does not have to be the same and makes best attempt to recreate bite with new numbers.
