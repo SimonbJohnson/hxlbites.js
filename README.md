@@ -15,7 +15,7 @@ To get mapping bites
 
 return array of bites with following structure:
 
-{  
+<blockquote>{  
   bite: array [...data for chart...],  
   geom_attribute: string "...field name in geometry file to join data by...",  
   geom_url: array [...URLs to download matchin geometry file],  
@@ -25,14 +25,14 @@ return array of bites with following structure:
   title: string "...title of bite...",  
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure...",  
-}  
+}</blockquote>
 
 To get chart bites
 <blockquote>hb.getChartBites();</blockquote>
 
 return array of bites with following structure:
 
-{  
+<blockquote>{  
   bite: array [...data for chart...],  
   id: string "...chart bite ID...",  
   priority: number,  
@@ -40,7 +40,7 @@ return array of bites with following structure:
   title: string "...title of bite...",  
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure",  
-}  
+}</blockquote>  
 
 To get table bites
 <blockquote>hb.getTableBites();</blockquote>
@@ -51,7 +51,7 @@ To get crosstable bites
 To get text bites
 <blockquote>hb.getTextBites();</blockquote>
 
-{
+<blockquote>{
   bite: string "...generate text string...",  
   id: string "...chart bite ID...",  
   priority: number,  
@@ -59,7 +59,8 @@ To get text bites
   title: undefined,  
   type: string "...bite type...",  
   uniqueID: string "...unique ID combining bite and data structure",  
-}
+}</blockquote>
 
 <blockquote>hb.reverse(uniqueID)</blockquote>
+
 Return single bite related to unique ID.  Data does not have to be the same and makes best attempt to recreate bite with new numbers.
