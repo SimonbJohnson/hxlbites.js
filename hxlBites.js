@@ -1,27 +1,54 @@
 let hxlBites = {
 
+	//variable data is stored in
 	_data: [],
-	_headers: {},
+	//identifying whether a dataset is a timeseries
 	timeSeries: false,
 	timeSeriesFilter: '',
 	timeSeriesFilterHeader: '',
 
+	//function to set data and check is data is a timeseries
 	data: function(data){
 		this._data = data;
 		this._data = this.checkTimeSeriesAndFilter(data);
 		return this;
 	},
 
+	//check if data is a timeseries
 	checkTimeSeriesAndFilter(data){
 		let self = this;
-		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update']},self._data);
+		
+		//get values for tags that match
+		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update','#date-reported']},self._data);
 		let timeSeries = true;
+		
+		//tracking which column to filter on and by what value
 		let filterValue='';
 		let filterHeader = '';
 		let filterCol = 0;
+		
+		//check if any data columns
 		if(matches.length==0){
 			timeSeries = false;
+		} else {
+			[timeseries,filterValue,filterHeader,filterCol] = self._checkColumnMatchesForTimeSeries(matches);
 		}
+		if(timeSeries){
+			let headers = data.slice(0, 2);
+			data = data.slice(2,data.length);
+			data = self._filterData(data,filterCol,filterValue);
+			data = headers.concat(data);
+		}
+		self.timeSeries = timeSeries;
+		self.timeSeriesFilter = filterValue;
+		self.timeSeriesFilterHeader = filterHeader;
+		return data;
+	},
+
+	_checkColumnMatchesForTimeSeries: function(matches){
+		let self = this;
+		console.log('check matches');
+		timeSeries = true
 		matches.forEach(function(match){
 			let keyValues = self._varFuncKeyValue(match);
 			let length = keyValues.length;
@@ -40,17 +67,9 @@ let hxlBites = {
 				filterHeader = match.header;
 			}
 		});
-		if(timeSeries){
-			let headers = data.slice(0, 2);
-			data = data.slice(2,data.length);
-			data = self._filterData(data,filterCol,filterValue);
-			data = headers.concat(data);
-		}
-		self.timeSeries = timeSeries;
-		self.timeSeriesFilter = filterValue;
-		self.timeSeriesFilterHeader = filterHeader;
-		return data;
+		return [timeSeries,filterValue,filterCol,filterHeader];
 	},
+
 
 	getTextBites: function(){
 		let self = this;
