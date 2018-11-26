@@ -2,8 +2,10 @@ let hxlBites = {
 
 	//variable data is stored in
 	_data: [],
+
 	//variable unfiltered timeseries data stored in
 	_fullData: [],
+
 	//identifying whether a dataset is a timeseries
 	timeSeries: false,
 	timeSeriesFilter: '',
@@ -14,8 +16,6 @@ let hxlBites = {
 		this._data = data;
 		this._fullData = data;
 		this._data = this.checkTimeSeriesAndFilter(data);
-		console.log(this._fullData);
-		console.log(this._data);
 		return this;
 	},
 
@@ -182,6 +182,45 @@ let hxlBites = {
 					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
 				});		
 			}			
+		});
+		return bites;
+	},
+
+	getTimeSeriesBites: function(){
+
+		let self = this;
+		let bites = [];
+
+		if(!self.timeSeries){
+			return [];
+		}
+
+		// through all timeSeriesBites and check criteria
+		this._timeSeriesBites.forEach(function(bite,i){
+
+			//get unique values for each ingredient for checking against bite criteria
+			let distinctOptions = {};
+			bite.ingredients.forEach(function(ingredient){
+				distinctValues = self._getIngredientValues(ingredient,self._fullData);
+				distinctOptions[ingredient.name] = distinctValues;
+			});
+
+			//return just the ingredients that match the criteria of the bite
+			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
+
+			//skip if no values match
+			if(matchingValues !== false){
+
+				//get all the combinations of matching values with their data table
+				let variables = self._getTableVariablesWithMatching(self._fullData,bite,matchingValues);
+
+				//construct bite from chart bite
+				let newBites = self._generateChartBite(bite.chart,variables);
+				newBites.forEach(function(newBite,i){
+					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
+				});		
+			}
+
 		});
 		return bites;
 	},
@@ -492,9 +531,6 @@ let hxlBites = {
 	},
 
 	_filterData(data,col,value){
-		console.log(data);
-		console.log(col);
-		console.log(value);
 		let filterData = data.filter(function(d,index){
 			if(d[col]==value){
 				return true;

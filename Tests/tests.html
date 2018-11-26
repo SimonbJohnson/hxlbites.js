@@ -6,6 +6,7 @@
     <script src="../hxl.js"></script>
     <script src="../hxlBites.js"></script>
     <script src="../hxlBitesChart.js"></script>
+    <script src="../hxlBitesTimeSeries.js"></script>
     <script src="../hxlBitesCrossTables.js"></script>
     <script src="../hxlBitesMap.js"></script>
     <script src="../hxlBitesRender.js"></script>
@@ -125,7 +126,7 @@
     $.ajax({
       url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
       success: function(result){
-        console.log(hxlBites.data(result).getTextBites());
+        console.log(hxlBites.data(result).getTimeSeriesBites());
       },
       error: function(err){
         console.log(err);
