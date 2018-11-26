@@ -2,6 +2,8 @@ let hxlBites = {
 
 	//variable data is stored in
 	_data: [],
+	//variable unfiltered timeseries data stored in
+	_fullData: [],
 	//identifying whether a dataset is a timeseries
 	timeSeries: false,
 	timeSeriesFilter: '',
@@ -10,7 +12,10 @@ let hxlBites = {
 	//function to set data and check is data is a timeseries
 	data: function(data){
 		this._data = data;
+		this._fullData = data;
 		this._data = this.checkTimeSeriesAndFilter(data);
+		console.log(this._fullData);
+		console.log(this._data);
 		return this;
 	},
 
@@ -19,7 +24,7 @@ let hxlBites = {
 		let self = this;
 		
 		//get values for tags that match
-		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update','#date-reported']},self._data);
+		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update','#date-report']},self._data);
 		let timeSeries = true;
 		
 		//tracking which column to filter on and by what value
@@ -33,28 +38,39 @@ let hxlBites = {
 		} else {
 			[timeseries,filterValue,filterHeader,filterCol] = self._checkColumnMatchesForTimeSeries(matches);
 		}
+
+		//if time series data is found filter for last date
 		if(timeSeries){
 			let headers = data.slice(0, 2);
 			data = data.slice(2,data.length);
 			data = self._filterData(data,filterCol,filterValue);
 			data = headers.concat(data);
 		}
+
+		//global time series 
 		self.timeSeries = timeSeries;
 		self.timeSeriesFilter = filterValue;
 		self.timeSeriesFilterHeader = filterHeader;
 		return data;
 	},
 
+	//loops through matches and returns first timeseries
 	_checkColumnMatchesForTimeSeries: function(matches){
 		let self = this;
-		console.log('check matches');
 		timeSeries = true
+
+		//loop through every match
 		matches.forEach(function(match){
+
+			//keyvalue of date plus count of occurences
 			let keyValues = self._varFuncKeyValue(match);
+
+			//check there enough unique values to be a time series
 			let length = keyValues.length;
 			if(keyValues[length-1].value<3){
 				timeSeries = false;
 			} else {
+				//sort alphabetically (assumes date in YYYY-MM-DD format currently)
 				keyValues = keyValues.sort(function(a,b){
 					if (a.key < b.key)
     					return -1;
@@ -62,12 +78,13 @@ let hxlBites = {
     					return 1;
   					return 0;
 				});
+				//filter for latest date from sort
 				filterValue = keyValues[length-1].key;
 				filterCol = match.col;
 				filterHeader = match.header;
 			}
 		});
-		return [timeSeries,filterValue,filterCol,filterHeader];
+		return [timeSeries,filterValue,filterHeader,filterCol];
 	},
 
 
@@ -475,6 +492,9 @@ let hxlBites = {
 	},
 
 	_filterData(data,col,value){
+		console.log(data);
+		console.log(col);
+		console.log(value);
 		let filterData = data.filter(function(d,index){
 			if(d[col]==value){
 				return true;
