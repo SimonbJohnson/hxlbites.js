@@ -18,7 +18,7 @@ hxlBites._timeSeriesBites = [
 'criteria':['date > 4'],
 'variables': ['date', 'sum(value)'],
 'chart':'',
-'title':'Count of {1}',
+'title':'{1} by {2}',
 'priority': 8,
 }
 ];
