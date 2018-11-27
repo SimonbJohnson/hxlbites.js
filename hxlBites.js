@@ -213,10 +213,20 @@ let hxlBites = {
 
 				//get all the combinations of matching values with their data table
 				let variables = self._getTableVariablesWithMatching(self._fullData,bite,matchingValues);
+				//turning date strings into date objects
 
+				variables = self._formatTimeSeriesVariables(variables);
 				//construct bite from chart bite
 				let newBites = self._generateChartBite(bite.chart,variables);
 				newBites.forEach(function(newBite,i){
+
+					//sort by date
+					let headers = newBite.bite.slice(0, 1);
+					data = newBite.bite.slice(1,newBite.bite.length);
+					data = data.sort(function(a,b){
+						return a[0] - b[0];
+					});
+					newBite.bite = headers.concat(data);
 					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
 				});		
 			}
@@ -244,6 +254,17 @@ let hxlBites = {
 			}		
 		});
 		return bites;
+	},
+
+	_formatTimeSeriesVariables: function(variables){
+		variables.forEach(function(variable,j){
+			variable.table[0].forEach(function(d,i){
+				if(i>0){
+					variables[j].table[0][i] = new Date(d);
+				}
+			});
+		});
+		return variables;
 	},
 
 	_getTitleVariables: function(variables,matchingValues){
