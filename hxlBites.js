@@ -918,8 +918,14 @@ let hxlBites = {
 
 		var self = this;
 
+		var data = self._data;
+
+
 		var parts = id.split('/');
 		var biteID = parts[0]
+		if (biteID.substr(0,4)=='time'){
+			data = self._fullData;
+		}
 		var columns = [];
 		var length = (parts.length-1)/2
 		for(i=0;i<length;i++){
@@ -927,17 +933,17 @@ let hxlBites = {
 		}	
 		columns.forEach(function(col,i){
 			columns[i]=self.confirmCols(col);
-			columns[i].values = self.getValues(self._data,col);
+			columns[i].values = self.getValues(data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
 		});
-		var bite = this.getBite(biteID)
+		var bite = this.getBite(biteID);
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
 		newBites = [];
 		let uniqueID = '';
 		let variables = '';
 		if(bite.type!='text'){
-			variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+			variables = self._getTableVariablesWithMatching(data,bite,matchingValues);
 		} else {
 			bite.ingredients.forEach(function(ingredient){
 				matchingValues[ingredient.name].forEach(function(match){
@@ -949,13 +955,16 @@ let hxlBites = {
 			newBites[0].uniqueID = uniqueID;
 		}
 		if(bite.type=='chart'){
+			if (biteID.substr(0,4)=='time'){
+				variables = self._formatTimeSeriesVariables(variables);
+			}
 			newBites = self._generateChartBite(bite.chart,variables);
 		}		
 		if(bite.type=='table'){
 			newBites = self._generateTableBite(bite.table,variables);
 		}
 		if(bite.type=='cross table'){
-			let variables = self._getCrossTableVariables(self._data,bite,matchingValues);
+			let variables = self._getCrossTableVariables(data,bite,matchingValues);
 			newBites = [self._generateCrossTableBite(bite.table,variables)];
 			newBites[0].title = 'Crosstable';
 		}
@@ -985,6 +994,14 @@ let hxlBites = {
 			}
 		}		
 		newBites.forEach(function(newBite,i){
+			if (biteID.substr(0,4)=='time'){
+				let headers = newBite.bite.slice(0, 1);
+				data = newBite.bite.slice(1,newBite.bite.length);
+				data = data.sort(function(a,b){
+					return a[0] - b[0];
+				});
+				newBite.bite = headers.concat(data);
+			}
 			bites.push({'type':bite.type,'subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
 			if(bite.type=='map'){
 				bites[i].geom_url=newBite.geom_url;
@@ -998,6 +1015,11 @@ let hxlBites = {
 	getBite: function(id){
 		var bite = {};
 		hxlBites._chartBites.forEach(function(b){
+			if(b.id==id){
+				bite = b;
+			}
+		});
+		hxlBites._timeSeriesBites.forEach(function(b){
 			if(b.id==id){
 				bite = b;
 			}
