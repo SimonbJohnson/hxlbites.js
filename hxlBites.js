@@ -36,9 +36,8 @@ let hxlBites = {
 		if(matches.length==0){
 			timeSeries = false;
 		} else {
-			[timeseries,filterValue,filterHeader,filterCol] = self._checkColumnMatchesForTimeSeries(matches);
+			[timeSeries,filterValue,filterHeader,filterCol] = self._checkColumnMatchesForTimeSeries(matches);
 		}
-
 		//if time series data is found filter for last date
 		if(timeSeries){
 			let headers = data.slice(0, 2);
@@ -46,7 +45,6 @@ let hxlBites = {
 			data = self._filterData(data,filterCol,filterValue);
 			data = headers.concat(data);
 		}
-
 		//global time series 
 		self.timeSeries = timeSeries;
 		self.timeSeriesFilter = filterValue;

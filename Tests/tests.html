@@ -122,13 +122,22 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
       url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
       success: function(result){
         //console.log(hxlBites.data(result).getTimeSeriesBites());
         console.log(hxlBites.data(result).reverse('time0002/#date+event/0/#affected+infected+total/7'));
         console.log(hxlBites.data(result).reverse('chart0021/#adm2+health+name/4/#affected+confirmed+infected/6'));
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fbeta.proxy.hxlstandard.org%2Fdata%2F1d0a79%2Fdownload%2Fafrica-dtm-baseline-assessments-topline.csv",
+      success: function(result){
+        console.log(hxlBites.data(result).getTextBites());
       },
       error: function(err){
         console.log(err);
