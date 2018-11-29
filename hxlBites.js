@@ -58,6 +58,10 @@ let hxlBites = {
 	_checkColumnMatchesForTimeSeries: function(matches){
 		let self = this;
 		timeSeries = true
+		let filterValue='';
+		let filterHeader = '';
+		let filterCol = 0;
+
 
 		//loop through every match
 		matches.forEach(function(match){
