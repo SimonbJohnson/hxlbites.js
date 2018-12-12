@@ -133,11 +133,32 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
       url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fbeta.proxy.hxlstandard.org%2Fdata%2F1d0a79%2Fdownload%2Fafrica-dtm-baseline-assessments-topline.csv",
       success: function(result){
         console.log(hxlBites.data(result).getTextBites());
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?filter01=replace-map&replace-map-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hTE0U3V8x18homc5KxfA7IIrv1Y9F1oulhJt0Z4z3zo%2Fedit%23gid%3D0&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1GugpfyzridvfezFcDsl6dNlpZDqI8TQJw-Jx52obny8%2Fedit%23gid%3D0&merge-keys02=%23country%2Bname&merge-tags02=%23country%2Bcode&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1eo0HCLg-kcRe3716DZbgSOA3dWBopJNcECeswFSFCYs%2Fedit%23gid%3D0",
+      success: function(result){
+        //console.log(hxlBites.data(result).getTimeSeriesBites());
+        console.log(result)
+        console.log(hxlBites.data(result).reverse('map0001/#country+code/10'));
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?force=1&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1lH4KPEGMpEAaYtEAMU-UddBXcqX5usMQzT8u-BMJ2PY%2Fedit%23gid%3D0",
+      success: function(result){
+        console.log(result)
+        console.log(hxlBites.data(result).reverse('cross0001/#loc/0/#status/7'));
       },
       error: function(err){
         console.log(err);

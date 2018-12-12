@@ -965,7 +965,7 @@ let hxlBites = {
 		if(bite.type=='table'){
 			newBites = self._generateTableBite(bite.table,variables);
 		}
-		if(bite.type=='cross table'){
+		if(bite.type=='crosstable'){
 			let variables = self._getCrossTableVariables(data,bite,matchingValues);
 			newBites = [self._generateCrossTableBite(bite.table,variables)];
 			newBites[0].title = 'Crosstable';
