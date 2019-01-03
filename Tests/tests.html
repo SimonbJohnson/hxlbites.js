@@ -22,7 +22,7 @@
   </body>
   <script>
     console.log('Running Tests');
-  	/*$.ajax({
+  	$.ajax({
   		url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
@@ -153,7 +153,7 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
       url: "https://proxy.hxlstandard.org/data.json?force=1&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1lH4KPEGMpEAaYtEAMU-UddBXcqX5usMQzT8u-BMJ2PY%2Fedit%23gid%3D0",
       success: function(result){

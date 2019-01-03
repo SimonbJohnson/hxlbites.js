@@ -66,10 +66,10 @@ let hxlBites = {
 
 			//keyvalue of date plus count of occurences
 			let keyValues = self._varFuncKeyValue(match);
-
+			console.log(keyValues);
 			//check there enough unique values to be a time series
 			let length = keyValues.length;
-			if(keyValues[length-1].value<3){
+			if(length<2){
 				timeSeries = false;
 			} else {
 				//sort alphabetically (assumes date in YYYY-MM-DD format currently)
