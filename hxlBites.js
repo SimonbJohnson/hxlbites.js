@@ -552,7 +552,7 @@ let hxlBites = {
 		return {'table':table,'uniqueID':bite.id+'/'+keyMatch1.tag+'/'+keyMatch1.col+'/'+keyMatch2.tag+'/'+keyMatch2.col};
 	},
 
-	_filterData(data,col,value){
+	_filterData: function(data,col,value){
 		let filterData = data.filter(function(d,index){
 			if(d[col]==value){
 				return true;
