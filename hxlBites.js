@@ -20,7 +20,7 @@ let hxlBites = {
 	},
 
 	//check if data is a timeseries
-	checkTimeSeriesAndFilter(data){
+	checkTimeSeriesAndFilter: function(data){
 		let self = this;
 		
 		//get values for tags that match
@@ -66,7 +66,6 @@ let hxlBites = {
 
 			//keyvalue of date plus count of occurences
 			let keyValues = self._varFuncKeyValue(match);
-			console.log(keyValues);
 			//check there enough unique values to be a time series
 			let length = keyValues.length;
 			if(length<2){
@@ -922,22 +921,30 @@ let hxlBites = {
 
 		var data = self._data;
 
-
+		//split bite ID into it constituent parts
 		var parts = id.split('/');
+		//bite ID is first part
 		var biteID = parts[0]
+
+		//if bite is a timeseries then reference the full data rather than data filtered to the latest data
 		if (biteID.substr(0,4)=='time'){
 			data = self._fullData;
 		}
+
+		//column data in two parts in the unique bite ID.  The original tag and column number
 		var columns = [];
 		var length = (parts.length-1)/2
 		for(i=0;i<length;i++){
 			columns.push({'tag':parts[i*2+1],'number':+parts[i*2+2]})
-		}	
+		}
+
+		//for each column confirm if tag is present	
 		columns.forEach(function(col,i){
 			columns[i]=self.confirmCols(col);
 			columns[i].values = self.getValues(data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
 		});
+		console.log(columns);
 		var bite = this.getBite(biteID);
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
@@ -1062,12 +1069,14 @@ let hxlBites = {
 	},
 
 	createMatchingValues: function(bite,cols){
+		console.log(cols);
 		var matchingValues = {}
 		bite.ingredients.forEach(function(ingredient){
 			matchingValues[ingredient.name] = [];
 		});
 		cols.forEach(function(col){
-			//only match tags not attributes - improve in future - probably works 99% of the time
+			//applies the column to the correct ingredient that contains the tag to create matching values
+			//might be a problem if both ingredients use the same tag.
 			bite.ingredients.forEach(function(ingredient){
 				ingredient.tags.forEach(function(tag){
 					var formatTag = tag.replace('-','+').split('+')[0];
@@ -1084,6 +1093,7 @@ let hxlBites = {
 				});
 			});
 		});
+		console.log(matchingValues);
 		return matchingValues;
 	},
 
