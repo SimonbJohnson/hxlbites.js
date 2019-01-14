@@ -22,7 +22,7 @@
   </body>
   <script>
     console.log('Running Tests');
-  	$.ajax({
+  	/*$.ajax({
   		url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
@@ -164,6 +164,28 @@
       error: function(err){
         console.log(err);
       }
+    });*/
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
+      success: function(result){
+        console.log(result)
+        console.log(hxlBites.data(result).reverse('time0002/#date+event/0/#affected+confirmed+infected+new/17'));
+        //console.log(hxlBites.data(result).reverse('time0002/#date+event/0/#affected+killed+new/11'));
+      },
+      error: function(err){
+        console.log(err);
+      }
     });
+
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?filter01=replace-map&replace-map-url01=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1hTE0U3V8x18homc5KxfA7IIrv1Y9F1oulhJt0Z4z3zo%2Fedit%23gid%3D0&filter02=merge&merge-url02=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1GugpfyzridvfezFcDsl6dNlpZDqI8TQJw-Jx52obny8%2Fedit%23gid%3D0&merge-keys02=%23country%2Bname&merge-tags02=%23country%2Bcode&filter03=clean&clean-date-tags03=%23date&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1rVAE8b3uC_XIqU-eapUGLU7orIzYSUmvlPm9tI0bCbU%2Fedit%23gid%3D0",
+      success: function(result){
+        console.log(hxlBites.data(result));
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
+
   </script>
 </html>

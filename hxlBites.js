@@ -32,7 +32,7 @@ let hxlBites = {
 		let filterHeader = '';
 		let filterCol = 0;
 		
-		//check if any data columns
+		//check if any date columns
 		if(matches.length==0){
 			timeSeries = false;
 		} else {
@@ -47,6 +47,7 @@ let hxlBites = {
 		}
 		//global time series 
 		self.timeSeries = timeSeries;
+		console.log(timeSeries);
 		self.timeSeriesFilter = filterValue;
 		self.timeSeriesFilterHeader = filterHeader;
 		return data;
@@ -68,26 +69,54 @@ let hxlBites = {
 			let keyValues = self._varFuncKeyValue(match);
 			//check there enough unique values to be a time series
 			let length = keyValues.length;
+			var lastValue = keyValues[length-1].value;
+			// lastvalue>3
+			//sort alphabetically (assumes date in YYYY-MM-DD format currently)
+			keyValues = keyValues.sort(function(a,b){
+				if (a.key < b.key)
+    				return -1;
+  				if (a.key > b.key)
+    				return 1;
+  				return 0;
+			});	
+			var values = keyValues.map(function(d){return new Date(d.key)});
+			var diffs = diff(values);
+			var sd = stddev(diffs);
 			if(length<2){
 				timeSeries = false;
-			} else {
-				//sort alphabetically (assumes date in YYYY-MM-DD format currently)
-				keyValues = keyValues.sort(function(a,b){
-					if (a.key < b.key)
-    					return -1;
-  					if (a.key > b.key)
-    					return 1;
-  					return 0;
-				});
+			} else if(sd<0.5 || lastValue>2){
 				//filter for latest date from sort
 				filterValue = keyValues[length-1].key;
 				filterCol = match.col;
 				filterHeader = match.header;
+			} else {
+				timeSeries = false;
 			}
 		});
 		return [timeSeries,filterValue,filterHeader,filterCol];
-	},
 
+		function diff(arr){
+			var output = [];
+			for(var i=1;i<arr.length;i++){
+				var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+				var firstDate = arr[i];
+				var secondDate = arr[i-1];
+
+				var diff = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+				if(!isNaN(diff)){
+					output.push(diff);
+				}			
+			}
+			return output;
+		}
+
+		function stddev(array){
+			n = array.length;
+			mean = array.reduce((a,b) => a+b)/n;
+			s = Math.sqrt(array.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+			return s;
+		}
+	},
 
 	getTextBites: function(){
 		let self = this;
@@ -944,7 +973,6 @@ let hxlBites = {
 			columns[i].values = self.getValues(data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
 		});
-		console.log(columns);
 		var bite = this.getBite(biteID);
 		var matchingValues = this.createMatchingValues(bite,columns);
 		var bites = [];
@@ -1069,7 +1097,6 @@ let hxlBites = {
 	},
 
 	createMatchingValues: function(bite,cols){
-		console.log(cols);
 		var matchingValues = {}
 		bite.ingredients.forEach(function(ingredient){
 			matchingValues[ingredient.name] = [];
@@ -1093,7 +1120,6 @@ let hxlBites = {
 				});
 			});
 		});
-		console.log(matchingValues);
 		return matchingValues;
 	},
 
