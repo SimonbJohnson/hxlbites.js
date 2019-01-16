@@ -81,16 +81,19 @@ let hxlBites = {
 			});	
 			var values = keyValues.map(function(d){return new Date(d.key)});
 			var diffs = diff(values);
-			var sd = stddev(diffs);
+			
 			if(length<3){
 				timeSeries = false;
-			} else if(sd<0.5 || lastValue>2){
-				//filter for latest date from sort
-				filterValue = keyValues[length-1].key;
-				filterCol = match.col;
-				filterHeader = match.header;
 			} else {
-				timeSeries = false;
+				var sd = stddev(diffs);
+				if(sd<0.5 || lastValue>2){
+					//filter for latest date from sort
+					filterValue = keyValues[length-1].key;
+					filterCol = match.col;
+					filterHeader = match.header;
+				} else {
+					timeSeries = false;
+				}
 			}
 		});
 		return [timeSeries,filterValue,filterHeader,filterCol];
