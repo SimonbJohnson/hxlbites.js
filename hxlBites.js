@@ -24,7 +24,7 @@ let hxlBites = {
 		let self = this;
 		
 		//get values for tags that match
-		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update','#date-report']},self._data);
+		let matches = self._getIngredientValues({'name':'#date','tags':['#date-update','#date-report','#date-start']},self._data);
 		let timeSeries = true;
 		
 		//tracking which column to filter on and by what value
@@ -82,7 +82,7 @@ let hxlBites = {
 			var values = keyValues.map(function(d){return new Date(d.key)});
 			var diffs = diff(values);
 			var sd = stddev(diffs);
-			if(length<2){
+			if(length<3){
 				timeSeries = false;
 			} else if(sd<0.5 || lastValue>2){
 				//filter for latest date from sort
