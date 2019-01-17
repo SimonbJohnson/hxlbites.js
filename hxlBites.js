@@ -675,7 +675,7 @@ let hxlBites = {
 			});
 			//let matchPercent = maxMatch/values.length;
 			//let unmatched = values.length - maxMatch;
-			return {'code':maxCode,'name':maxName,'url':[maxURL],'clean':[]};
+			return {'code':maxCode,'name':maxName,'url':[maxURL],'clean':[],'name_att':'NAME'};
 		}
 		if(level>0){
 			let iso3Codes = [];
@@ -714,15 +714,21 @@ let hxlBites = {
 				}
 			})
 			let urls = [];
+			let codes = [];
+			let name_atts = [];
 			let urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
+			console.log(iso3Codes);
 			iso3Codes.forEach(function(d){
 		        var url = d.url.replace(/{{country}}/g, d.iso3.toUpperCase());
 		        url = url.replace("{{level}}", level+d.adjustment);
 		        urls.push(url);
+		        var code = d.code_att.replace("{{level}}", level);
+		        var name_att = d.name_att.replace("{{level}}", level);
+		        codes.push(code);
+		        name_atts.push(name_att);
 			});
 			//admin code to go in here
-			code = 'admin'+(level)+'Pcode'
-			return {'code':code,'name':'cod','url':urls,'clean':pcodeClean};			
+			return {'code':codes,'name':'cod','url':urls,'clean':pcodeClean,'name_atts':name_atts};			
 		}
 		return false
 
@@ -852,6 +858,7 @@ let hxlBites = {
 						d[0] = d[0].replace(c[0],c[1]);
 					});
 				});
+				console.log(mapData);
 				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url};
 				bites.push(bite);
 			}

@@ -21,26 +21,24 @@
     <p>Open console to see tests</p>
   </body>
   <script>
+
     console.log('Running Tests');
-  	/*$.ajax({
+  	$.ajax({
   		url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
         console.log(output);
         if(output.length>8){
           console.error('Map Test Fail: Too many results');
-        } else if (output[0].uniqueID != 'map0002/#country+code/2/#population+hh+idps/5') {
-          console.error('Map Test Fail: Unexpected ID');
-          console.log(output[0].uniqueID);
         } else {
           console.log('Map Test Pass');
         }
 
-        let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#population+hh+idps/5');
+        let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#affected+hh+idps/5');
         console.log(bite);
-        bite = hxlBites.data(result).reverse('chart0009/#country+name/1/#population+hh+idps/5');
+        bite = hxlBites.data(result).reverse('chart0009/#country+name/1/#affected+hh+idps/5');
         console.log(bite);
-        bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#population+idps+ind/6');
+        bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#affected+idps+ind/6');
         console.log(bite);
 
       },
@@ -53,7 +51,7 @@
       success: function(result){
         let output = hxlBites.data(result).getTextBites();
         console.log(output);
-        output = hxlBites.data(result).reverse('text0012/#population+idps+ind/6');
+        output = hxlBites.data(result).reverse('text0012/#affected+idps+ind/6');
         console.log(output);
         console.log("Text bites success");
 
@@ -104,18 +102,18 @@
         console.log(output);
         if(output.length>8){
           console.error('Map Test Fail: Too many results');
-        } else if (output[0].uniqueID != 'map0002/#country+code/2/#population+hh+idps/5') {
+        } else if (output[0].uniqueID != 'map0002/#country+code/2/#affected+hh+idps/5') {
           console.error('Map Test Fail: Unexpected ID');
           console.log(output[0].uniqueID);
         } else {
           console.log('Map Test Pass');
         }
 
-        let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#population+hh+idps/5');
+        let bite = hxlBites.data(result).reverse('map0002/#country+code/2/#affected+hh+idps/5');
         console.log(bite);
-        bite = hxlBites.data(result).reverse('chart0009/#country+name/1/#population+hh+idps/5');
+        bite = hxlBites.data(result).reverse('chart0009/#country+name/1/#affected+hh+idps/5');
         console.log(bite);
-        bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#population+idps+ind/6');
+        bite = hxlBites.data(result).reverse('map0002/#adm1+code/4/#affected+idps+ind/6');
         console.log(bite);
 
       },
@@ -164,7 +162,7 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
       url: "https://proxy.hxlstandard.org/data.json?filter01=sort&sort-tags01=%23date%2Bevent&sort-reverse01=on&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1azJVeMiZMTJOjuKEFNETSlmaVDD0kQQXSHnhjEnEsfI%2Fedit%23gid%3D0",
       success: function(result){
