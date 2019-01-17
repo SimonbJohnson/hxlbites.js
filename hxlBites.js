@@ -675,7 +675,7 @@ let hxlBites = {
 			});
 			//let matchPercent = maxMatch/values.length;
 			//let unmatched = values.length - maxMatch;
-			return {'code':maxCode,'name':maxName,'url':[maxURL],'clean':[],'name_att':'NAME'};
+			return {'code':[maxCode],'name':maxName,'url':[maxURL],'clean':[],'name_att':'NAME'};
 		}
 		if(level>0){
 			let iso3Codes = [];
