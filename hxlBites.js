@@ -675,7 +675,7 @@ let hxlBites = {
 			});
 			//let matchPercent = maxMatch/values.length;
 			//let unmatched = values.length - maxMatch;
-			return {'code':[maxCode],'name':maxName,'url':[maxURL],'clean':[],'name_att':'NAME'};
+			return {'code':[maxCode],'name':maxName,'url':[maxURL],'clean':[],'name_att':['NAME']};
 		}
 		if(level>0){
 			let iso3Codes = [];
@@ -728,7 +728,7 @@ let hxlBites = {
 		        name_atts.push(name_att);
 			});
 			//admin code to go in here
-			return {'code':codes,'name':'cod','url':urls,'clean':pcodeClean,'name_atts':name_atts};			
+			return {'code':codes,'name':'cod','url':urls,'clean':pcodeClean,'name_att':name_atts};			
 		}
 		return false
 
@@ -858,8 +858,8 @@ let hxlBites = {
 						d[0] = d[0].replace(c[0],c[1]);
 					});
 				});
-				console.log(mapData);
-				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url};
+				console.log(mapCheck);
+				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url,'name_attribute':mapCheck.name_att};
 				bites.push(bite);
 			}
 		});
@@ -1053,6 +1053,7 @@ let hxlBites = {
 			if(bite.type=='map'){
 				bites[i].geom_url=newBite.geom_url;
 				bites[i].geom_attribute=newBite.geom_attribute;
+				bites[i].name_attribute=newBite.name_attribute;
 			}
 		});
 		return bites[0];
