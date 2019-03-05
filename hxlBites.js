@@ -283,7 +283,6 @@ let hxlBites = {
 				} else {
 					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 				}
-				console.log(variables);
 				let newBites = self._generateMapBite(bite.map,variables);
 				newBites.forEach(function(newBite,i){
 					bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute,'name_attribute':newBite.name_attribute});
@@ -417,7 +416,6 @@ let hxlBites = {
 	},
 
 	_getTableVariablesForPoint: function(data,bite,matchingValues){
-		console.log(matchingValues);
 		let table = [['lat','lon']];
 		matchingValues['lat'][0].values.forEach(function(d,i){
 			let row = [d,matchingValues['lon'][0].values[i]];
@@ -998,7 +996,6 @@ let hxlBites = {
 		}
 		//for each column confirm if tag is present	
 		columns.forEach(function(col,i){
-			console.log(col);
 			columns[i]=self.confirmCols(col);
 			columns[i].values = self.getValues(data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
@@ -1038,9 +1035,7 @@ let hxlBites = {
 		var mapCheck;						
 		if(bite.type=='map'){
 			if(bite.subType=='point'){
-				console.log(matchingValues);
 				variables = self._getTableVariablesForPoint(data,bite,matchingValues);
-				console.log(variables);
 			}
 			//can this whole section be removed
 			/*let tag = columns[0].tag;
@@ -1146,7 +1141,6 @@ let hxlBites = {
 		bite.ingredients.forEach(function(ingredient){
 			matchingValues[ingredient.name] = [];
 		});
-		console.log(cols);
 		cols.forEach(function(col){
 			//applies the column to the correct ingredient that contains the tag to create matching values
 			//might be a problem if both ingredients use the same tag.
