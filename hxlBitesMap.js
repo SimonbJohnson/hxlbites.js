@@ -19,6 +19,17 @@ hxlBites._mapBites = [{
 'map':'',
 'title':'Map of {2}',
 'priority': 10,
+},
+{
+'id':'map0003',
+'type':'map',
+'subType':'point',
+'ingredients':[{'name':'lat','tags':['#geo+lat']},{'name':'lon','tags':['#geo+lon']}],
+'criteria':['lat > 0','lon > 0'],
+'variables': ['lat', 'lon'],
+'map':'',
+'title':'Map of points',
+'priority': 10,
 }];
 
 hxlBites._mapValues = {'world':[

@@ -184,6 +184,16 @@
         console.log(err);
       }
     });
-
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?filter01=cut&cut-skip-untagged01=on&filter02=select&select-query02-01=%23date%2Boccurred%3E2018-12-31&url=https%3A%2F%2Fproxy.hxlstandard.org%2Fdata%2Fe0c1eb.csv%3Furl%3Dhttps%253A%252F%252Fapi.acleddata.com%252Facled%252Fread.csv%253Flimit%253D0%2526terms%253Daccept%2526iso%253D716%26name%3DACLEDHXL%26tagger-match-all%3Don%26tagger-02-header%3Diso%26tagger-02-tag%3D%2523country%252Bcode%26tagger-03-header%3Devent_id_cnty%26tagger-03-tag%3D%2523event%252Bcode%26tagger-05-header%3Devent_date%26tagger-05-tag%3D%2523date%252Boccurred%2B%26tagger-08-header%3Devent_type%26tagger-08-tag%3D%2523event%252Btype%26tagger-09-header%3Dactor1%26tagger-09-tag%3D%2523group%252Bname%252Bfirst%26tagger-10-header%3Dassoc_actor_1%26tagger-10-tag%3D%2523group%252Bname%252Bfirst%252Bassoc%26tagger-12-header%3Dactor2%26tagger-12-tag%3D%2523group%252Bname%252Bsecond%26tagger-13-header%3Dassoc_actor_2%26tagger-13-tag%3D%2523group%252Bname%252Bsecond%252Bassoc%26tagger-16-header%3Dregion%26tagger-16-tag%3D%2523region%252Bname%26tagger-17-header%3Dcountry%26tagger-17-tag%3D%2523country%252Bname%26tagger-18-header%3Dadmin1%26tagger-18-tag%3D%2523adm1%252Bname%26tagger-19-header%3Dadmin2%26tagger-19-tag%3D%2523adm2%252Bname%26tagger-20-header%3Dadmin3%26tagger-20-tag%3D%2523adm3%252Bname%26tagger-21-header%3Dlocation%26tagger-21-tag%3D%2523loc%252Bname%26tagger-22-header%3Dlatitude%26tagger-22-tag%3D%2523geo%252Blat%26tagger-23-header%3Dlongitude%26tagger-23-tag%3D%2523geo%252Blon%26tagger-25-header%3Dsource%26tagger-25-tag%3D%2523meta%252Bsource%26tagger-27-header%3Dnotes%26tagger-27-tag%3D%2523description%26tagger-28-header%3Dfatalities%26tagger-28-tag%3D%2523affected%252Bkilled%26header-row%3D1",
+      success: function(result){
+        console.log(result[1]);
+        //console.log(hxlBites.data(result).getMapBites());
+        console.log(hxlBites.data(result).reverse('map0003/#geo+lat/14/#geo+lon/15'));
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });
   </script>
 </html>

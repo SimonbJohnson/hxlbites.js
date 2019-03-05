@@ -278,11 +278,16 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
-						let newBites = self._generateMapBite(bite.map,variables);
-						newBites.forEach(function(newBite,i){
-							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute,'name_attribute':newBite.name_attribute});
-						});
+				if(bite.subType=='point'){
+					var variables = self._getTableVariablesForPoint(self._data,bite,matchingValues);
+				} else {
+					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+				}
+				console.log(variables);
+				let newBites = self._generateMapBite(bite.map,variables);
+				newBites.forEach(function(newBite,i){
+					bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute,'name_attribute':newBite.name_attribute});
+				});
 			}		
 		});
 		return bites;
@@ -409,6 +414,17 @@ let hxlBites = {
 			}
 		}
 		return ingredientValues;
+	},
+
+	_getTableVariablesForPoint: function(data,bite,matchingValues){
+		console.log(matchingValues);
+		let table = [['lat','lon']];
+		matchingValues['lat'][0].values.forEach(function(d,i){
+			let row = [d,matchingValues['lon'][0].values[i]];
+			table.push(row);
+		});
+		let uniqueID = bite.id + '/' + matchingValues['lat'][0].tag + '/' + matchingValues['lat'][0].col +'/'+ matchingValues['lon'][0].tag + '/' + matchingValues['lon'][0].col
+		return [{'table':table,'uniqueID':uniqueID,'title':bite.title}]
 	},
 
 	_getTableVariablesWithMatching: function(data,bite,matchingValues){
@@ -836,6 +852,9 @@ let hxlBites = {
 			let tag = v.uniqueID.split('/')[1];
 			let location = null;
 			let level = -1;
+
+			//improve tag detection, doesn't work if extra attributes are included
+
 			if(tag=='#country+code'){
 				level = 0;
 			}
@@ -857,6 +876,10 @@ let hxlBites = {
 					});
 				});
 				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url,'name_attribute':mapCheck.name_att};
+				bites.push(bite);
+			}
+			if(tag=='#geo+lat'){
+				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':'','geom_url':'','name_attribute':''};
 				bites.push(bite);
 			}
 		});
@@ -975,6 +998,7 @@ let hxlBites = {
 		}
 		//for each column confirm if tag is present	
 		columns.forEach(function(col,i){
+			console.log(col);
 			columns[i]=self.confirmCols(col);
 			columns[i].values = self.getValues(data,col);
 			columns[i].uniqueValues = self.getDistinct(columns[i].values);
@@ -1013,7 +1037,13 @@ let hxlBites = {
 		}
 		var mapCheck;						
 		if(bite.type=='map'){
-			let tag = columns[0].tag;
+			if(bite.subType=='point'){
+				console.log(matchingValues);
+				variables = self._getTableVariablesForPoint(data,bite,matchingValues);
+				console.log(variables);
+			}
+			//can this whole section be removed
+			/*let tag = columns[0].tag;
 			let location = null;
 			let level = -1;
 			if(tag=='#country+code'){
@@ -1028,19 +1058,19 @@ let hxlBites = {
 			if(tag=='#adm3+code'){
 				level = 3;
 			}	
-			if(level>-1){
+			if(level>-1){*/
 				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 				//let titles = self._generateTextBite(bite.title,titleVariables);
-				let keyVariable = bite.variables[0]
-				let values = matchingValues[keyVariable][0].values;
+				//let keyVariable = bite.variables[0]
+				//let values = matchingValues[keyVariable][0].values;
 				//mapCheck = self._checkMapCodes(level,values);
 				/*mapCheck.clean.forEach(function(c){
 					mapData.forEach(function(d){
 						d[0] = d[0].replace(c[0],c[1]);
 					});
 				});	*/	
-				newBites = self._generateMapBite(bite.chart,variables);
-			}
+			newBites = self._generateMapBite(bite.chart,variables);
+			//}
 		}
 		newBites.forEach(function(newBite,i){
 			if (biteID.substr(0,4)=='time'){
@@ -1110,10 +1140,13 @@ let hxlBites = {
 	},
 
 	createMatchingValues: function(bite,cols){
+
+		var self = this;
 		var matchingValues = {}
 		bite.ingredients.forEach(function(ingredient){
 			matchingValues[ingredient.name] = [];
 		});
+		console.log(cols);
 		cols.forEach(function(col){
 			//applies the column to the correct ingredient that contains the tag to create matching values
 			//might be a problem if both ingredients use the same tag.
@@ -1121,7 +1154,9 @@ let hxlBites = {
 				ingredient.tags.forEach(function(tag){
 					var formatTag = tag.replace('-','+').split('+')[0];
 					var colTag = col.tag.split('+')[0];
-					if(formatTag==colTag){
+
+					if(self._tagCompare(tag,col.tag)){
+					//if(formatTag==colTag){
 						var matchingValue = {};
 						matchingValue['tag'] = col.tag;
 						matchingValue['header'] = col.header;
@@ -1134,6 +1169,32 @@ let hxlBites = {
 			});
 		});
 		return matchingValues;
+	},
+
+	_tagCompare: function(tag1,tag2){
+		//doesn't include excludes
+		let match = true;
+		let tag1include = [];
+		let tag2include = [];
+		let parts = tag1.split('+').slice(1);
+		tag1 = tag1[0].split('-')[0];
+		parts.forEach(function(p){
+			tag1include.push(p.split('-')[0]);
+		});
+		parts = tag2.split('+').slice(1);
+		tag2 = tag2[0].split('-')[0];
+		parts.forEach(function(p){
+			tag2include.push(p.split('-')[0]);
+		});
+		if(tag1!=tag2){
+			match = false;
+		}
+		tag1include.forEach(function(att1){
+			if(tag2include.indexOf(att1)==-1){
+				match = false;
+			}
+		})
+		return match;
 	},
 
 	getValues: function(data,col){
