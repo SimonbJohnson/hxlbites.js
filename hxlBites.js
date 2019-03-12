@@ -143,7 +143,7 @@ let hxlBites = {
 				let variables = self._getVariables(bite,matchingValues);
 				let newBites = self._generateTextBite(bite.phrase,variables);
 				newBites.forEach(function(newBite,i){
-					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':uniqueIDs[i]});
+					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':bite.id,'uniqueID':uniqueIDs[i]});
 				});
 				
 			}
@@ -616,41 +616,46 @@ let hxlBites = {
 			let func = variable.split('(')[0];
 			let ingredient = variable.split(')')[0].split('(')[1];
 			let items=[];
-			matchingValues[ingredient].forEach(function(match){
-				if(func == 'count'){
-					items.push(self._varFuncCount(match));
-				}
-				if(func == 'single'){
-					items.push(self._varFuncSingle(match));
-				}
-				if(func == 'header'){
-					items.push(self._varFuncHeader(match));
-				}
-				if(func == 'tag'){
-					items.push(self._varFuncTag(match));
-				}
-				if(func == 'list'){
-					items.push(self._varFuncList(match));
-				}
-				if(func == 'listOrCount'){
-					items.push(self._varFuncListOrCount(match));
-				}
-				if(func == 'first'){
-					items.push(self._varFuncSortPosition(match,0));
-				}
-				if(func == 'firstCount'){
-					items.push(self._varFuncSortPositionCount(match,0));
-				}
-				if(func == 'second'){
-					items.push(self._varFuncSortPosition(match,1));
-				}
-				if(func == 'secondCount'){
-					items.push(self._varFuncSortPositionCount(match,1));
-				}
-				if(func == 'sum'){
-					items.push(self._varFuncSum(match));
-				}									
-			});
+			console.log(func);
+			if(func == 'total'){
+				items.push(self._data.length-2);
+			} else {
+				matchingValues[ingredient].forEach(function(match){
+					if(func == 'count'){
+						items.push(self._varFuncCount(match));
+					}
+					if(func == 'single'){
+						items.push(self._varFuncSingle(match));
+					}
+					if(func == 'header'){
+						items.push(self._varFuncHeader(match));
+					}
+					if(func == 'tag'){
+						items.push(self._varFuncTag(match));
+					}
+					if(func == 'list'){
+						items.push(self._varFuncList(match));
+					}
+					if(func == 'listOrCount'){
+						items.push(self._varFuncListOrCount(match));
+					}
+					if(func == 'first'){
+						items.push(self._varFuncSortPosition(match,0));
+					}
+					if(func == 'firstCount'){
+						items.push(self._varFuncSortPositionCount(match,0));
+					}
+					if(func == 'second'){
+						items.push(self._varFuncSortPosition(match,1));
+					}
+					if(func == 'secondCount'){
+						items.push(self._varFuncSortPositionCount(match,1));
+					}
+					if(func == 'sum'){
+						items.push(self._varFuncSum(match));
+					}									
+				});
+			}
 			variableList.push(items);
 		});
 		return variableList;
@@ -1084,7 +1089,6 @@ let hxlBites = {
 			}
 		});
 		return bites[0];
-
 	},
 
 	getBite: function(id){
@@ -1148,9 +1152,7 @@ let hxlBites = {
 				ingredient.tags.forEach(function(tag){
 					var formatTag = tag.replace('-','+').split('+')[0];
 					var colTag = col.tag.split('+')[0];
-
 					if(self._tagCompare(tag,col.tag)){
-					//if(formatTag==colTag){
 						var matchingValue = {};
 						matchingValue['tag'] = col.tag;
 						matchingValue['header'] = col.header;
@@ -1171,12 +1173,12 @@ let hxlBites = {
 		let tag1include = [];
 		let tag2include = [];
 		let parts = tag1.split('+').slice(1);
-		tag1 = tag1[0].split('-')[0];
+		tag1 = tag1.replace('-','+').split('+')[0];
 		parts.forEach(function(p){
 			tag1include.push(p.split('-')[0]);
 		});
 		parts = tag2.split('+').slice(1);
-		tag2 = tag2[0].split('-')[0];
+		tag2 = tag2.replace('-','+').split('+')[0];
 		parts.forEach(function(p){
 			tag2include.push(p.split('-')[0]);
 		});

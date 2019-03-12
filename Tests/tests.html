@@ -23,7 +23,7 @@
   <script>
 
     console.log('Running Tests');
-  	$.ajax({
+  	/*$.ajax({
   		url: "https://beta.proxy.hxlstandard.org/data/1d0a79/download/africa-dtm-baseline-assessments-topline.json",
   		success: function(result){
         let output = hxlBites.data(result).getMapBites();
@@ -190,6 +190,15 @@
         console.log(result[1]);
         //console.log(hxlBites.data(result).getMapBites());
         console.log(hxlBites.data(result).reverse('map0003/#geo+lat/14/#geo+lon/15'));
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    $.ajax({
+      url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdata.humdata.org%2Fdataset%2F1a770477-7083-41bb-a88a-54f7b857c297%2Fresource%2Fd7474bd7-c11c-4f87-b709-24bc4ec5119c%2Fdownload%2Ffts_requirements_funding_cluster_pse.csv",
+      success: function(result){
+        console.log(hxlBites.data(result).getTimeSeriesBites());
       },
       error: function(err){
         console.log(err);
