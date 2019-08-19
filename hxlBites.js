@@ -55,15 +55,15 @@ let hxlBites = {
 	//loops through matches and returns first timeseries
 	_checkColumnMatchesForTimeSeries: function(matches){
 		let self = this;
-		timeSeries = true
+		timeSeries = [];
 		let filterValue='';
 		let filterHeader = '';
 		let filterCol = 0;
 
 
 		//loop through every match
-		matches.forEach(function(match){
-
+		matches.forEach(function(match,i){
+			timeSeries.push(true);
 			//keyvalue of date plus count of occurences
 			let keyValues = self._varFuncKeyValue(match);
 			//check there enough unique values to be a time series
@@ -81,21 +81,28 @@ let hxlBites = {
 			var values = keyValues.map(function(d){return new Date(d.key)});
 			var diffs = diff(values);
 			
-			if(length<3){
-				timeSeries = false;
+			if(length<5){
+				timeSeries[i] = false;
 			} else {
 				var sd = stddev(diffs);
-				if(sd<0.5 || lastValue>2){
+				if(sd<0.6|| lastValue>2){
 					//filter for latest date from sort
-					filterValue = keyValues[length-1].key;
-					filterCol = match.col;
-					filterHeader = match.header;
+					if(filterValue==''){
+						filterValue = keyValues[length-1].key;
+						filterCol = match.col;
+						filterHeader = match.header;						
+					}
 				} else {
-					timeSeries = false;
+					timeSeries[i] = false;
 				}
 			}
 		});
-		return [timeSeries,filterValue,filterHeader,filterCol];
+		for(var i = 0;i<timeSeries.length;i++){
+			if(timeSeries[i]){
+				return [timeSeries[i],filterValue,filterHeader,filterCol];
+			}
+		}
+		return [false,filterValue,filterHeader,filterCol];
 
 		function diff(arr){
 			var output = [];
@@ -114,9 +121,12 @@ let hxlBites = {
 
 		function stddev(array){
 			n = array.length;
-			mean = array.reduce((a,b) => a+b)/n;
-			s = Math.sqrt(array.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
-			return s;
+			if(n>0){
+				mean = array.reduce((a,b) => a+b)/n;
+				s = Math.sqrt(array.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+				return s;
+			}
+			return 100;
 		}
 	},
 
@@ -457,6 +467,49 @@ let hxlBites = {
 								workingTables[i].push(col);
 							});
 						}
+						if(func == 'countDistinct'){
+							let sumValue = variable.split('(')[1].split(')')[0];
+							var newWorkingTables = [];
+							var newIDMatches = [];
+							var newHeaderMatches = [];
+							var length = matchingValues[sumValue].length;
+							for (i = 0; i < length; i++){
+								newWorkingTables = newWorkingTables.concat(JSON.parse(JSON.stringify(workingTables)));
+								newIDMatches = newIDMatches.concat(JSON.parse(JSON.stringify(idMatches)));
+								newHeaderMatches = newIDMatches.concat(JSON.parse(JSON.stringify(headerMatches)));
+							}
+							workingTables = JSON.parse(JSON.stringify(newWorkingTables));
+							idMatches = JSON.parse(JSON.stringify(newIDMatches));
+							headerMatches = JSON.parse(JSON.stringify(newHeaderMatches));
+							matchingValues[sumValue].forEach(function(match, ti){
+								let col = new Array(firstCol.length).fill(0);
+								idMatches.forEach(function(idMatch,i){
+									if(i % length==ti){
+										idMatches[i].push({'tag':match.tag,'col':match.col});
+										headerMatches[i].push(match.header);
+									}
+								});
+								col[0] = 'Value';
+								firstCol.forEach(function(value,index){
+									if(index>0){
+										let filteredData = self._filterData(data,keyMatch.col,value);
+										let sum = [];
+										filteredData.forEach(function(row,index){
+											let value = row[match.col];
+											if(sum.indexOf(value)==-1){
+												sum.push(value);
+											}							
+										});
+										col[index] = sum.length;
+									}
+								});
+								workingTables.forEach(function(table,i){
+									if(i % length==ti){
+										workingTables[i].push(col);
+									}
+								});								
+							});	
+						}
 						if(func == 'sum'){
 							let sumValue = variable.split('(')[1].split(')')[0];
 							var newWorkingTables = [];
@@ -616,7 +669,6 @@ let hxlBites = {
 			let func = variable.split('(')[0];
 			let ingredient = variable.split(')')[0].split('(')[1];
 			let items=[];
-			console.log(func);
 			if(func == 'total'){
 				items.push(self._data.length-2);
 			} else {

@@ -195,9 +195,36 @@
         console.log(err);
       }
     });*/
-    $.ajax({
+    /*$.ajax({
       url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdata.humdata.org%2Fdataset%2F1a770477-7083-41bb-a88a-54f7b857c297%2Fresource%2Fd7474bd7-c11c-4f87-b709-24bc4ec5119c%2Fdownload%2Ffts_requirements_funding_cluster_pse.csv",
       success: function(result){
+        console.log(hxlBites.data(result).getTimeSeriesBites());
+      },
+      error: function(err){
+        console.log(err);
+      }
+    $.ajax({
+        url: "https://proxy.hxlstandard.org/data.json?force=on&filter01=cut&cut-skip-untagged01=o&url=https%3A%2F%2Fproxy.hxlstandard.org%2Fdata.csv%3Ffilter01%3Dadd%26add-tag01%3D%2523date%252Byear%26add-value01%3D%257B%257B%2523date%257D%257D%26add-header01%3DYear%26filter02%3Dreplace%26replace-pattern02%3D%2528%255Cd%257B4%257D%2529-.%252A%26replace-regex02%3Don%26replace-value02%3D%255C1%26replace-tags02%3D%2523date%252Byear%26url%3Dhttps%253A%252F%252Fdocs.google.com%252Fspreadsheets%252Fd%252Fe%252F2PACX-1vQt8wd_saDzHip7lcXkmnxe7Wxyy7_snDLCv3lDpUNLcRF5lSBGbztkqlo2zwWXkXxiFHIAyZhyp9hU%252Fpub%253Fgid%253D831696165%2526single%253Dtrue%2526output%253Dcsv",
+      success: function(result){
+        console.log(hxlBites.data(result).getTimeSeriesBites());
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    /*$.ajax({
+        url: "https://proxy.hxlstandard.org/data.json?force=on&filter01=cut&cut-skip-untagged01=o&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1JMzLwLWsImzZ9bzbdhNSXd7XcrSW6lbkQsTvhzjLgfc%2Fedit%23gid%3D1800165124",
+      success: function(result){
+        console.log(hxlBites.data(result).getMapBites());
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    $.ajax({
+        url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdata.humdata.org%2Fdataset%2Fa138154a-be9a-464a-bd73-619443f3a9ac%2Fresource%2F6fe01c88-a0c0-4016-a9f1-e8c94228dc14%2Fdownload%2Fsind-in-harms-way-dataset-2017-2019.xlsx",
+      success: function(result){
+        console.log(hxlBites.data(result).getChartBites());
         console.log(hxlBites.data(result).getTimeSeriesBites());
       },
       error: function(err){
