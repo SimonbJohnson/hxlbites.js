@@ -220,12 +220,24 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
-        url: "https://proxy.hxlstandard.org/data.json?url=https%3A%2F%2Fdata.humdata.org%2Fdataset%2Fa138154a-be9a-464a-bd73-619443f3a9ac%2Fresource%2F6fe01c88-a0c0-4016-a9f1-e8c94228dc14%2Fdownload%2Fsind-in-harms-way-dataset-2017-2019.xlsx",
+        url: "https://proxy.hxlstandard.org/data.json?filter01=cut&cut-skip-untagged01=on&url=https%3A%2F%2Fdata.humdata.org%2Fdataset%2Fa138154a-be9a-464a-bd73-619443f3a9ac%2Fresource%2F6fe01c88-a0c0-4016-a9f1-e8c94228dc14%2Fdownload%2Fsind-in-harms-way-dataset-2017-2019.xlsx",
       success: function(result){
         console.log(hxlBites.data(result).getChartBites());
         console.log(hxlBites.data(result).getTimeSeriesBites());
+      },
+      error: function(err){
+        console.log(err);
+      }
+    });*/
+    $.ajax({
+        url: "https://proxy.hxlstandard.org/data.json?filter01=cut&cut-include-tags01=%23date%2C%23adm1%2C%23adm2%2C%23affected%2Binfected%2Bconfirmed&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2Fe%2F2PACX-1vSrr9DRaC2fXzPdmOxLW-egSYtxmEp_RKoYGggt-zOKYXSx4RjPsM4EO19H7OJVX1esTtIoFvlKFWcn%2Fpub%3Fgid%3D1564028913%26single%3Dtrue%26output%3Dcsv",
+      success: function(result){
+        console.log(hxlBites.data(result).getChartBites());
+        console.log(hxlBites.data(result).getTimeSeriesBites());
+        console.log(hxlBites.data(result).reverse('chart0009/#adm1+health+name/2/#affected+confirmed+infected/4/timefilter'));
+        console.log(hxlBites.data(result).reverse('chart0009/#adm1+health+name/2/#affected+confirmed+infected/4'));
       },
       error: function(err){
         console.log(err);

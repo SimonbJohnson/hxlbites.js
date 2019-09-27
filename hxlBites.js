@@ -203,22 +203,32 @@ let hxlBites = {
 			}			
 		});
 		return bites;
-	},	
+	},
 
 	getChartBites: function(){
+		let self = this;
+		let bites = [];
+		bites = bites.concat(self.getChartBitesMain(self._data,true));
+		if(self.timeSeries){
+			bites = bites.concat(self.getChartBitesMain(self._fullData,false));
+		}
+		return bites;
+	},	
+
+	getChartBitesMain: function(data,timeseries){
 		let self = this;
 		let bites = [];
 		this._chartBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
-				distinctValues = self._getIngredientValues(ingredient,self._data);
+				distinctValues = self._getIngredientValues(ingredient,data);
 				distinctOptions[ingredient.name] = distinctValues;
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
 				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 				//let titles = self._generateTextBite(bite.title,titleVariables);
-				let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+				let variables = self._getTableVariablesWithMatching(data,bite,matchingValues,timeseries);
 				let newBites = self._generateChartBite(bite.chart,variables);
 				newBites.forEach(function(newBite,i){
 					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
@@ -280,6 +290,16 @@ let hxlBites = {
 	getMapBites: function(){
 		let self = this;
 		let bites = [];
+		bites = bites.concat(self.getMapBitesMain(self._data,true));
+		if(self.timeSeries){
+			bites = bites.concat(self.getMapBitesMain(self._fullData,false));
+		}
+		return bites;
+	},
+
+	getMapBitesMain: function(data,timeseries){
+		let self = this;
+		let bites = [];
 		this._mapBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
@@ -291,7 +311,7 @@ let hxlBites = {
 				if(bite.subType=='point'){
 					var variables = self._getTableVariablesForPoint(self._data,bite,matchingValues);
 				} else {
-					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues,timeseries);
 				}
 				let newBites = self._generateMapBite(bite.map,variables);
 				newBites.forEach(function(newBite,i){
@@ -435,7 +455,7 @@ let hxlBites = {
 		return [{'table':table,'uniqueID':uniqueID,'title':bite.title}]
 	},
 
-	_getTableVariablesWithMatching: function(data,bite,matchingValues){
+	_getTableVariablesWithMatching: function(data,bite,matchingValues,timeseries = false){
 
 		//needs large efficieny improvements
 		
@@ -587,6 +607,9 @@ let hxlBites = {
 				idMatches[i].forEach(function(d){
 					uniqueID = uniqueID + '/'+d.tag+'/'+d.col;
 				})
+				if(timeseries){
+					uniqueID+='/timefilter';
+				}
 				headerMatches[i].forEach(function(header){
 					titleVars.push([header]);
 				});
@@ -1033,7 +1056,8 @@ let hxlBites = {
 
 		var self = this;
 
-		var data = self._data;
+		//var data = self._data;
+		var data = self._fullData;
 
 		//split bite ID into it constituent parts
 		var parts = id.split('/');
@@ -1041,9 +1065,18 @@ let hxlBites = {
 		var biteID = parts[0]
 
 		//if bite is a timeseries then reference the full data rather than data filtered to the latest data
-		if (biteID.substr(0,4)=='time'){
+		/*if (biteID.substr(0,4)=='time'){
 			data = self._fullData;
+		}*/
+
+		//if data is filtered for time then set data to subset.  What if timeseries no longer triggers?
+		let timeFilter = parts[parts.length-1];
+		if(timeFilter == 'timefilter'){
+			data = self._data;
+			parts.pop();
 		}
+
+
 
 		//column data in two parts in the unique bite ID.  The original tag and column number
 		var columns = [];
@@ -1094,37 +1127,12 @@ let hxlBites = {
 			if(bite.subType=='point'){
 				variables = self._getTableVariablesForPoint(data,bite,matchingValues);
 			}
-			//can this whole section be removed
-			/*let tag = columns[0].tag;
-			let location = null;
-			let level = -1;
-			if(tag=='#country+code'){
-				level = 0;
-			}
-			if(tag=='#adm1+code'){
-				level = 1;
-			}
-			if(tag=='#adm2+code'){
-				level = 2;
-			}
-			if(tag=='#adm3+code'){
-				level = 3;
-			}	
-			if(level>-1){*/
-				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
-				//let titles = self._generateTextBite(bite.title,titleVariables);
-				//let keyVariable = bite.variables[0]
-				//let values = matchingValues[keyVariable][0].values;
-				//mapCheck = self._checkMapCodes(level,values);
-				/*mapCheck.clean.forEach(function(c){
-					mapData.forEach(function(d){
-						d[0] = d[0].replace(c[0],c[1]);
-					});
-				});	*/	
 			newBites = self._generateMapBite(bite.chart,variables);
-			//}
 		}
 		newBites.forEach(function(newBite,i){
+			if(timeFilter == 'timefilter'){
+				newBite.uniqueID += '/timefilter';
+			}
 			if (biteID.substr(0,4)=='time'){
 				let headers = newBite.bite.slice(0, 1);
 				data = newBite.bite.slice(1,newBite.bite.length);
