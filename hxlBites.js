@@ -55,15 +55,15 @@ let hxlBites = {
 	//loops through matches and returns first timeseries
 	_checkColumnMatchesForTimeSeries: function(matches){
 		let self = this;
-		timeSeries = true
+		timeSeries = [];
 		let filterValue='';
 		let filterHeader = '';
 		let filterCol = 0;
 
 
 		//loop through every match
-		matches.forEach(function(match){
-
+		matches.forEach(function(match,i){
+			timeSeries.push(true);
 			//keyvalue of date plus count of occurences
 			let keyValues = self._varFuncKeyValue(match);
 			//check there enough unique values to be a time series
@@ -81,21 +81,28 @@ let hxlBites = {
 			var values = keyValues.map(function(d){return new Date(d.key)});
 			var diffs = diff(values);
 			
-			if(length<3){
-				timeSeries = false;
+			if(length<5){
+				timeSeries[i] = false;
 			} else {
 				var sd = stddev(diffs);
-				if(sd<0.5 || lastValue>2){
+				if(sd<0.6|| lastValue>2){
 					//filter for latest date from sort
-					filterValue = keyValues[length-1].key;
-					filterCol = match.col;
-					filterHeader = match.header;
+					if(filterValue==''){
+						filterValue = keyValues[length-1].key;
+						filterCol = match.col;
+						filterHeader = match.header;						
+					}
 				} else {
-					timeSeries = false;
+					timeSeries[i] = false;
 				}
 			}
 		});
-		return [timeSeries,filterValue,filterHeader,filterCol];
+		for(var i = 0;i<timeSeries.length;i++){
+			if(timeSeries[i]){
+				return [timeSeries[i],filterValue,filterHeader,filterCol];
+			}
+		}
+		return [false,filterValue,filterHeader,filterCol];
 
 		function diff(arr){
 			var output = [];
@@ -114,9 +121,12 @@ let hxlBites = {
 
 		function stddev(array){
 			n = array.length;
-			mean = array.reduce((a,b) => a+b)/n;
-			s = Math.sqrt(array.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
-			return s;
+			if(n>0){
+				mean = array.reduce((a,b) => a+b)/n;
+				s = Math.sqrt(array.map(x => Math.pow(x-mean,2)).reduce((a,b) => a+b)/n);
+				return s;
+			}
+			return 100;
 		}
 	},
 
@@ -143,7 +153,7 @@ let hxlBites = {
 				let variables = self._getVariables(bite,matchingValues);
 				let newBites = self._generateTextBite(bite.phrase,variables);
 				newBites.forEach(function(newBite,i){
-					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':uniqueIDs[i]});
+					bites.push({'type':'text','subtype':bite.subType,'priority':bite.priority,'bite':newBite, 'id':bite.id,'uniqueID':uniqueIDs[i]});
 				});
 				
 			}
@@ -193,22 +203,32 @@ let hxlBites = {
 			}			
 		});
 		return bites;
-	},	
+	},
 
 	getChartBites: function(){
+		let self = this;
+		let bites = [];
+		bites = bites.concat(self.getChartBitesMain(self._data,true));
+		if(self.timeSeries){
+			bites = bites.concat(self.getChartBitesMain(self._fullData,false));
+		}
+		return bites;
+	},	
+
+	getChartBitesMain: function(data,timeseries){
 		let self = this;
 		let bites = [];
 		this._chartBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
-				distinctValues = self._getIngredientValues(ingredient,self._data);
+				distinctValues = self._getIngredientValues(ingredient,data);
 				distinctOptions[ingredient.name] = distinctValues;
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
 				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 				//let titles = self._generateTextBite(bite.title,titleVariables);
-				let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+				let variables = self._getTableVariablesWithMatching(data,bite,matchingValues,timeseries);
 				let newBites = self._generateChartBite(bite.chart,variables);
 				newBites.forEach(function(newBite,i){
 					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
@@ -270,6 +290,16 @@ let hxlBites = {
 	getMapBites: function(){
 		let self = this;
 		let bites = [];
+		bites = bites.concat(self.getMapBitesMain(self._data,true));
+		if(self.timeSeries){
+			bites = bites.concat(self.getMapBitesMain(self._fullData,false));
+		}
+		return bites;
+	},
+
+	getMapBitesMain: function(data,timeseries){
+		let self = this;
+		let bites = [];
 		this._mapBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
@@ -278,11 +308,15 @@ let hxlBites = {
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
-						let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
-						let newBites = self._generateMapBite(bite.map,variables);
-						newBites.forEach(function(newBite,i){
-							bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute,'name_attribute':newBite.name_attribute});
-						});
+				if(bite.subType=='point'){
+					var variables = self._getTableVariablesForPoint(self._data,bite,matchingValues);
+				} else {
+					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues,timeseries);
+				}
+				let newBites = self._generateMapBite(bite.map,variables);
+				newBites.forEach(function(newBite,i){
+					bites.push({'type':'map','subtype':bite.subType,'title': newBite.title,'priority':bite.priority,'bite':newBite.bite, 'uniqueID':newBite.uniqueID, 'id':bite.id, 'geom_url':newBite.geom_url,'geom_attribute':newBite.geom_attribute,'name_attribute':newBite.name_attribute});
+				});
 			}		
 		});
 		return bites;
@@ -411,7 +445,17 @@ let hxlBites = {
 		return ingredientValues;
 	},
 
-	_getTableVariablesWithMatching: function(data,bite,matchingValues){
+	_getTableVariablesForPoint: function(data,bite,matchingValues){
+		let table = [['lat','lon']];
+		matchingValues['lat'][0].values.forEach(function(d,i){
+			let row = [d,matchingValues['lon'][0].values[i]];
+			table.push(row);
+		});
+		let uniqueID = bite.id + '/' + matchingValues['lat'][0].tag + '/' + matchingValues['lat'][0].col +'/'+ matchingValues['lon'][0].tag + '/' + matchingValues['lon'][0].col
+		return [{'table':table,'uniqueID':uniqueID,'title':bite.title}]
+	},
+
+	_getTableVariablesWithMatching: function(data,bite,matchingValues,timeseries = false){
 
 		//needs large efficieny improvements
 		
@@ -442,6 +486,49 @@ let hxlBites = {
 							workingTables.forEach(function(table,i){
 								workingTables[i].push(col);
 							});
+						}
+						if(func == 'countDistinct'){
+							let sumValue = variable.split('(')[1].split(')')[0];
+							var newWorkingTables = [];
+							var newIDMatches = [];
+							var newHeaderMatches = [];
+							var length = matchingValues[sumValue].length;
+							for (i = 0; i < length; i++){
+								newWorkingTables = newWorkingTables.concat(JSON.parse(JSON.stringify(workingTables)));
+								newIDMatches = newIDMatches.concat(JSON.parse(JSON.stringify(idMatches)));
+								newHeaderMatches = newIDMatches.concat(JSON.parse(JSON.stringify(headerMatches)));
+							}
+							workingTables = JSON.parse(JSON.stringify(newWorkingTables));
+							idMatches = JSON.parse(JSON.stringify(newIDMatches));
+							headerMatches = JSON.parse(JSON.stringify(newHeaderMatches));
+							matchingValues[sumValue].forEach(function(match, ti){
+								let col = new Array(firstCol.length).fill(0);
+								idMatches.forEach(function(idMatch,i){
+									if(i % length==ti){
+										idMatches[i].push({'tag':match.tag,'col':match.col});
+										headerMatches[i].push(match.header);
+									}
+								});
+								col[0] = 'Value';
+								firstCol.forEach(function(value,index){
+									if(index>0){
+										let filteredData = self._filterData(data,keyMatch.col,value);
+										let sum = [];
+										filteredData.forEach(function(row,index){
+											let value = row[match.col];
+											if(sum.indexOf(value)==-1){
+												sum.push(value);
+											}							
+										});
+										col[index] = sum.length;
+									}
+								});
+								workingTables.forEach(function(table,i){
+									if(i % length==ti){
+										workingTables[i].push(col);
+									}
+								});								
+							});	
 						}
 						if(func == 'sum'){
 							let sumValue = variable.split('(')[1].split(')')[0];
@@ -520,6 +607,9 @@ let hxlBites = {
 				idMatches[i].forEach(function(d){
 					uniqueID = uniqueID + '/'+d.tag+'/'+d.col;
 				})
+				if(timeseries){
+					uniqueID+='/timefilter';
+				}
 				headerMatches[i].forEach(function(header){
 					titleVars.push([header]);
 				});
@@ -602,41 +692,45 @@ let hxlBites = {
 			let func = variable.split('(')[0];
 			let ingredient = variable.split(')')[0].split('(')[1];
 			let items=[];
-			matchingValues[ingredient].forEach(function(match){
-				if(func == 'count'){
-					items.push(self._varFuncCount(match));
-				}
-				if(func == 'single'){
-					items.push(self._varFuncSingle(match));
-				}
-				if(func == 'header'){
-					items.push(self._varFuncHeader(match));
-				}
-				if(func == 'tag'){
-					items.push(self._varFuncTag(match));
-				}
-				if(func == 'list'){
-					items.push(self._varFuncList(match));
-				}
-				if(func == 'listOrCount'){
-					items.push(self._varFuncListOrCount(match));
-				}
-				if(func == 'first'){
-					items.push(self._varFuncSortPosition(match,0));
-				}
-				if(func == 'firstCount'){
-					items.push(self._varFuncSortPositionCount(match,0));
-				}
-				if(func == 'second'){
-					items.push(self._varFuncSortPosition(match,1));
-				}
-				if(func == 'secondCount'){
-					items.push(self._varFuncSortPositionCount(match,1));
-				}
-				if(func == 'sum'){
-					items.push(self._varFuncSum(match));
-				}									
-			});
+			if(func == 'total'){
+				items.push(self._data.length-2);
+			} else {
+				matchingValues[ingredient].forEach(function(match){
+					if(func == 'count'){
+						items.push(self._varFuncCount(match));
+					}
+					if(func == 'single'){
+						items.push(self._varFuncSingle(match));
+					}
+					if(func == 'header'){
+						items.push(self._varFuncHeader(match));
+					}
+					if(func == 'tag'){
+						items.push(self._varFuncTag(match));
+					}
+					if(func == 'list'){
+						items.push(self._varFuncList(match));
+					}
+					if(func == 'listOrCount'){
+						items.push(self._varFuncListOrCount(match));
+					}
+					if(func == 'first'){
+						items.push(self._varFuncSortPosition(match,0));
+					}
+					if(func == 'firstCount'){
+						items.push(self._varFuncSortPositionCount(match,0));
+					}
+					if(func == 'second'){
+						items.push(self._varFuncSortPosition(match,1));
+					}
+					if(func == 'secondCount'){
+						items.push(self._varFuncSortPositionCount(match,1));
+					}
+					if(func == 'sum'){
+						items.push(self._varFuncSum(match));
+					}									
+				});
+			}
 			variableList.push(items);
 		});
 		return variableList;
@@ -836,6 +930,9 @@ let hxlBites = {
 			let tag = v.uniqueID.split('/')[1];
 			let location = null;
 			let level = -1;
+
+			//improve tag detection, doesn't work if extra attributes are included
+
 			if(tag=='#country+code'){
 				level = 0;
 			}
@@ -857,6 +954,10 @@ let hxlBites = {
 					});
 				});
 				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url,'name_attribute':mapCheck.name_att};
+				bites.push(bite);
+			}
+			if(tag=='#geo+lat'){
+				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':'','geom_url':'','name_attribute':''};
 				bites.push(bite);
 			}
 		});
@@ -955,7 +1056,8 @@ let hxlBites = {
 
 		var self = this;
 
-		var data = self._data;
+		//var data = self._data;
+		var data = self._fullData;
 
 		//split bite ID into it constituent parts
 		var parts = id.split('/');
@@ -963,9 +1065,18 @@ let hxlBites = {
 		var biteID = parts[0]
 
 		//if bite is a timeseries then reference the full data rather than data filtered to the latest data
-		if (biteID.substr(0,4)=='time'){
+		/*if (biteID.substr(0,4)=='time'){
 			data = self._fullData;
+		}*/
+
+		//if data is filtered for time then set data to subset.  What if timeseries no longer triggers?
+		let timeFilter = parts[parts.length-1];
+		if(timeFilter == 'timefilter'){
+			data = self._data;
+			parts.pop();
 		}
+
+
 
 		//column data in two parts in the unique bite ID.  The original tag and column number
 		var columns = [];
@@ -1013,36 +1124,15 @@ let hxlBites = {
 		}
 		var mapCheck;						
 		if(bite.type=='map'){
-			let tag = columns[0].tag;
-			let location = null;
-			let level = -1;
-			if(tag=='#country+code'){
-				level = 0;
+			if(bite.subType=='point'){
+				variables = self._getTableVariablesForPoint(data,bite,matchingValues);
 			}
-			if(tag=='#adm1+code'){
-				level = 1;
-			}
-			if(tag=='#adm2+code'){
-				level = 2;
-			}
-			if(tag=='#adm3+code'){
-				level = 3;
-			}	
-			if(level>-1){
-				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
-				//let titles = self._generateTextBite(bite.title,titleVariables);
-				let keyVariable = bite.variables[0]
-				let values = matchingValues[keyVariable][0].values;
-				//mapCheck = self._checkMapCodes(level,values);
-				/*mapCheck.clean.forEach(function(c){
-					mapData.forEach(function(d){
-						d[0] = d[0].replace(c[0],c[1]);
-					});
-				});	*/	
-				newBites = self._generateMapBite(bite.chart,variables);
-			}
+			newBites = self._generateMapBite(bite.chart,variables);
 		}
 		newBites.forEach(function(newBite,i){
+			if(timeFilter == 'timefilter'){
+				newBite.uniqueID += '/timefilter';
+			}
 			if (biteID.substr(0,4)=='time'){
 				let headers = newBite.bite.slice(0, 1);
 				data = newBite.bite.slice(1,newBite.bite.length);
@@ -1059,7 +1149,6 @@ let hxlBites = {
 			}
 		});
 		return bites[0];
-
 	},
 
 	getBite: function(id){
@@ -1110,6 +1199,8 @@ let hxlBites = {
 	},
 
 	createMatchingValues: function(bite,cols){
+
+		var self = this;
 		var matchingValues = {}
 		bite.ingredients.forEach(function(ingredient){
 			matchingValues[ingredient.name] = [];
@@ -1121,7 +1212,7 @@ let hxlBites = {
 				ingredient.tags.forEach(function(tag){
 					var formatTag = tag.replace('-','+').split('+')[0];
 					var colTag = col.tag.split('+')[0];
-					if(formatTag==colTag){
+					if(self._tagCompare(tag,col.tag)){
 						var matchingValue = {};
 						matchingValue['tag'] = col.tag;
 						matchingValue['header'] = col.header;
@@ -1134,6 +1225,32 @@ let hxlBites = {
 			});
 		});
 		return matchingValues;
+	},
+
+	_tagCompare: function(tag1,tag2){
+		//doesn't include excludes
+		let match = true;
+		let tag1include = [];
+		let tag2include = [];
+		let parts = tag1.split('+').slice(1);
+		tag1 = tag1.replace('-','+').split('+')[0];
+		parts.forEach(function(p){
+			tag1include.push(p.split('-')[0]);
+		});
+		parts = tag2.split('+').slice(1);
+		tag2 = tag2.replace('-','+').split('+')[0];
+		parts.forEach(function(p){
+			tag2include.push(p.split('-')[0]);
+		});
+		if(tag1!=tag2){
+			match = false;
+		}
+		tag1include.forEach(function(att1){
+			if(tag2include.indexOf(att1)==-1){
+				match = false;
+			}
+		})
+		return match;
 	},
 
 	getValues: function(data,col){
