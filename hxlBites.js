@@ -77,7 +77,7 @@ let hxlBites = {
   				if (a.key > b.key)
     				return 1;
   				return 0;
-			});	
+			});
 			var values = keyValues.map(function(d){return new Date(d.key)});
 			var diffs = diff(values);
 			
@@ -203,32 +203,22 @@ let hxlBites = {
 			}			
 		});
 		return bites;
-	},
-
-	getChartBites: function(){
-		let self = this;
-		let bites = [];
-		bites = bites.concat(self.getChartBitesMain(self._data,true));
-		if(self.timeSeries){
-			bites = bites.concat(self.getChartBitesMain(self._fullData,false));
-		}
-		return bites;
 	},	
 
-	getChartBitesMain: function(data,timeseries){
+	getChartBites: function(){
 		let self = this;
 		let bites = [];
 		this._chartBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
-				distinctValues = self._getIngredientValues(ingredient,data);
+				distinctValues = self._getIngredientValues(ingredient,self._data);
 				distinctOptions[ingredient.name] = distinctValues;
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
 				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 				//let titles = self._generateTextBite(bite.title,titleVariables);
-				let variables = self._getTableVariablesWithMatching(data,bite,matchingValues,timeseries);
+				let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 				let newBites = self._generateChartBite(bite.chart,variables);
 				newBites.forEach(function(newBite,i){
 					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
@@ -290,16 +280,6 @@ let hxlBites = {
 	getMapBites: function(){
 		let self = this;
 		let bites = [];
-		bites = bites.concat(self.getMapBitesMain(self._data,true));
-		if(self.timeSeries){
-			bites = bites.concat(self.getMapBitesMain(self._fullData,false));
-		}
-		return bites;
-	},
-
-	getMapBitesMain: function(data,timeseries){
-		let self = this;
-		let bites = [];
 		this._mapBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
@@ -311,7 +291,7 @@ let hxlBites = {
 				if(bite.subType=='point'){
 					var variables = self._getTableVariablesForPoint(self._data,bite,matchingValues);
 				} else {
-					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues,timeseries);
+					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
 				}
 				let newBites = self._generateMapBite(bite.map,variables);
 				newBites.forEach(function(newBite,i){
@@ -446,16 +426,16 @@ let hxlBites = {
 	},
 
 	_getTableVariablesForPoint: function(data,bite,matchingValues){
-		let table = [['lat','lon']];
+		let table = [['lat','lon',data[1],data[0]]];
 		matchingValues['lat'][0].values.forEach(function(d,i){
-			let row = [d,matchingValues['lon'][0].values[i]];
+			let row = [d,matchingValues['lon'][0].values[i],data[i+2]];
 			table.push(row);
 		});
 		let uniqueID = bite.id + '/' + matchingValues['lat'][0].tag + '/' + matchingValues['lat'][0].col +'/'+ matchingValues['lon'][0].tag + '/' + matchingValues['lon'][0].col
 		return [{'table':table,'uniqueID':uniqueID,'title':bite.title}]
 	},
 
-	_getTableVariablesWithMatching: function(data,bite,matchingValues,timeseries = false){
+	_getTableVariablesWithMatching: function(data,bite,matchingValues){
 
 		//needs large efficieny improvements
 		
@@ -607,9 +587,6 @@ let hxlBites = {
 				idMatches[i].forEach(function(d){
 					uniqueID = uniqueID + '/'+d.tag+'/'+d.col;
 				})
-				if(timeseries){
-					uniqueID+='/timefilter';
-				}
 				headerMatches[i].forEach(function(header){
 					titleVars.push([header]);
 				});
@@ -738,7 +715,6 @@ let hxlBites = {
 
 	_checkMapCodes: function(level,values){
 
-
 		worldgeos = hxlBites._mapValues.world;
 		codCodes = hxlBites._mapValues.cod;
 
@@ -754,7 +730,7 @@ let hxlBites = {
 				geomMeta.codes.forEach(function(code){
 					let match = 0;
 					values.forEach(function(value,i){
-						if(code.values.indexOf(value)>-1){
+						if(code.values.indexOf(value.toUpperCase())>-1){
 							match++;
 						}
 					});
@@ -787,7 +763,7 @@ let hxlBites = {
 					parsed.push(countryCode);
 					if(iso3){
 						codCodes.forEach(function(code){
-							if(code.iso3==countryCode){
+							if(code.iso3==countryCode && code.levels.indexOf(level)>-1){
 								iso3Codes.push(code);
 								if(code.iso3!=code.use){
 									pcodeClean.push([code.iso3,code.use]);
@@ -796,7 +772,7 @@ let hxlBites = {
 						});
 					} else {
 						codCodes.forEach(function(code){
-							if(code.iso2==countryCode){
+							if(code.iso2==countryCode && code.levels.indexOf(level)>-1){
 								iso3Codes.push(code);
 								if(code.iso2!=code.use){
 									pcodeClean.push([code.iso2,code.use]);
@@ -810,17 +786,20 @@ let hxlBites = {
 			let codes = [];
 			let name_atts = [];
 			let urlPattern = "https://gistmaps.itos.uga.edu/arcgis/rest/services/COD_External/{{country}}_pcode/MapServer/{{level}}/query?where=1%3D1&outFields=*&f=geojson";
-			iso3Codes.forEach(function(d){
-		        var url = d.url.replace(/{{country}}/g, d.iso3.toUpperCase());
-		        url = url.replace("{{level}}", level+d.adjustment);
-		        urls.push(url);
-		        var code = d.code_att.replace("{{level}}", level);
-		        var name_att = d.name_att.replace("{{level}}", level);
-		        codes.push(code);
-		        name_atts.push(name_att);
-			});
-			//admin code to go in here
-			return {'code':codes,'name':'cod','url':urls,'clean':pcodeClean,'name_att':name_atts};			
+			if(iso3Codes.length>0){
+				iso3Codes.forEach(function(d){
+			        var url = d.url.replace(/{{country}}/g, d.iso3.toUpperCase());
+			        url = url.replace("{{level}}", level+d.adjustment);
+			        urls.push(url);
+			        var code = d.code_att.replace("{{level}}", level);
+			        var name_att = d.name_att.replace("{{level}}", level);
+			        codes.push(code);
+			        name_atts.push(name_att);
+				});
+				return {'code':codes,'name':'cod','url':urls,'clean':pcodeClean,'name_att':name_atts};			
+			}
+			return false;
+					
 		}
 		return false
 
@@ -944,17 +923,23 @@ let hxlBites = {
 			}
 			if(tag=='#adm3+code'){
 				level = 3;
-			}							
+			}
+						
 			if(level>-1){
 				values = v.table[0].slice(1, v.table[0].length);
 				let mapCheck = self._checkMapCodes(level,values);
-				mapCheck.clean.forEach(function(c){
-					mapData.forEach(function(d){
-						d[0] = d[0].replace(c[0],c[1]);
+				if(mapCheck){
+					mapCheck.clean.forEach(function(c){
+						mapData.forEach(function(d){
+							d[0] = d[0].replace(c[0],c[1]);
+						});
 					});
-				});
-				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url,'name_attribute':mapCheck.name_att};
-				bites.push(bite);
+					mapData.forEach(function(d){
+						d[0] = d[0].toUpperCase();
+					});
+					let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':mapCheck.code,'geom_url':mapCheck.url,'name_attribute':mapCheck.name_att};
+					bites.push(bite);
+				}
 			}
 			if(tag=='#geo+lat'){
 				let bite = {'bite':mapData,'uniqueID':v.uniqueID,'title':v.title,'geom_attribute':'','geom_url':'','name_attribute':''};
@@ -1056,8 +1041,7 @@ let hxlBites = {
 
 		var self = this;
 
-		//var data = self._data;
-		var data = self._fullData;
+		var data = self._data;
 
 		//split bite ID into it constituent parts
 		var parts = id.split('/');
@@ -1065,18 +1049,9 @@ let hxlBites = {
 		var biteID = parts[0]
 
 		//if bite is a timeseries then reference the full data rather than data filtered to the latest data
-		/*if (biteID.substr(0,4)=='time'){
+		if (biteID.substr(0,4)=='time'){
 			data = self._fullData;
-		}*/
-
-		//if data is filtered for time then set data to subset.  What if timeseries no longer triggers?
-		let timeFilter = parts[parts.length-1];
-		if(timeFilter == 'timefilter'){
-			data = self._data;
-			parts.pop();
 		}
-
-
 
 		//column data in two parts in the unique bite ID.  The original tag and column number
 		var columns = [];
@@ -1127,12 +1102,37 @@ let hxlBites = {
 			if(bite.subType=='point'){
 				variables = self._getTableVariablesForPoint(data,bite,matchingValues);
 			}
+			//can this whole section be removed
+			/*let tag = columns[0].tag;
+			let location = null;
+			let level = -1;
+			if(tag=='#country+code'){
+				level = 0;
+			}
+			if(tag=='#adm1+code'){
+				level = 1;
+			}
+			if(tag=='#adm2+code'){
+				level = 2;
+			}
+			if(tag=='#adm3+code'){
+				level = 3;
+			}	
+			if(level>-1){*/
+				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
+				//let titles = self._generateTextBite(bite.title,titleVariables);
+				//let keyVariable = bite.variables[0]
+				//let values = matchingValues[keyVariable][0].values;
+				//mapCheck = self._checkMapCodes(level,values);
+				/*mapCheck.clean.forEach(function(c){
+					mapData.forEach(function(d){
+						d[0] = d[0].replace(c[0],c[1]);
+					});
+				});	*/	
 			newBites = self._generateMapBite(bite.chart,variables);
+			//}
 		}
 		newBites.forEach(function(newBite,i){
-			if(timeFilter == 'timefilter'){
-				newBite.uniqueID += '/timefilter';
-			}
 			if (biteID.substr(0,4)=='time'){
 				let headers = newBite.bite.slice(0, 1);
 				data = newBite.bite.slice(1,newBite.bite.length);
@@ -1190,16 +1190,25 @@ let hxlBites = {
 		var found = false;
 		var tag = this._data[1][col.number].split('+')[0];
 		var colTag = col.tag.split('+')[0];
+		var colAttributes = col.tag.split('+').pop(0);
 		if(tag == colTag){
 			col.header = this._data[0][col.number];
+			found = true;
+		}
+		/*if(!found){
+			//pick up here
+			this._data[1].forEach(function(tag){
+				tag = 
+			});
+		}*/
+		if(found){
 			return col;
 		} else {
-			return {}
+			return 'Error'
 		}
 	},
 
 	createMatchingValues: function(bite,cols){
-
 		var self = this;
 		var matchingValues = {}
 		bite.ingredients.forEach(function(ingredient){
