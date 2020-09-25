@@ -56,14 +56,19 @@ let hxlBites = {
 	_checkColumnMatchesForTimeSeries: function(matches){
 		let self = this;
 		timeSeries = [];
-		let filterValue='';
+		/*let filterValue='';
 		let filterHeader = '';
-		let filterCol = 0;
-
+		let filterCol = 0;*/
+		let filterValue=[];
+		let filterHeader = [];
+		let filterCol = [];
 
 		//loop through every match
 		matches.forEach(function(match,i){
 			timeSeries.push(true);
+			filterValue.push('');
+			filterHeader.push('');
+			filterCol.push(0);
 			//keyvalue of date plus count of occurences
 			let keyValues = self._varFuncKeyValue(match);
 			//check there enough unique values to be a time series
@@ -86,11 +91,14 @@ let hxlBites = {
 			} else {
 				var sd = stddev(diffs);
 				if(sd<0.6|| lastValue>2){
-					//filter for latest date from sort
+					//filter for latest date from sort, needs fix for right filter
 					if(filterValue==''){
-						filterValue = keyValues[length-1].key;
+						/*filterValue = keyValues[length-1].key;
 						filterCol = match.col;
-						filterHeader = match.header;						
+						filterHeader = match.header;*/
+						filterValue[i] = keyValues[length-1].key;
+						filterCol[i] = match.col;
+						filterHeader[i] = match.header;											
 					}
 				} else {
 					timeSeries[i] = false;
@@ -99,10 +107,10 @@ let hxlBites = {
 		});
 		for(var i = 0;i<timeSeries.length;i++){
 			if(timeSeries[i]){
-				return [timeSeries[i],filterValue,filterHeader,filterCol];
+				return [timeSeries[i],filterValue[i],filterHeader[i],filterCol[i]];
 			}
 		}
-		return [false,filterValue,filterHeader,filterCol];
+		return [false,'','',0];
 
 		function diff(arr){
 			var output = [];
@@ -208,17 +216,28 @@ let hxlBites = {
 	getChartBites: function(){
 		let self = this;
 		let bites = [];
+		bites = bites.concat(self.getChartBitesMain(self._data,self.timeSeries));
+		if(self.timeSeries){
+			bites = bites.concat(self.getChartBitesMain(self._fullData,false));
+		}
+		return bites;
+	},	
+
+	getChartBitesMain: function(data,timeseries){
+
+		let self = this;
+		let bites = [];
 		this._chartBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
-				distinctValues = self._getIngredientValues(ingredient,self._data);
+				distinctValues = self._getIngredientValues(ingredient,data);
 				distinctOptions[ingredient.name] = distinctValues;
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
 			if(matchingValues !== false){
 				//let titleVariables = self._getTitleVariables(bite.variables,matchingValues);				
 				//let titles = self._generateTextBite(bite.title,titleVariables);
-				let variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+				let variables = self._getTableVariablesWithMatching(data,bite,matchingValues,timeseries);
 				let newBites = self._generateChartBite(bite.chart,variables);
 				newBites.forEach(function(newBite,i){
 					bites.push({'type':'chart','subtype':bite.subType,'priority':bite.priority,'bite':newBite.bite, 'id':bite.id, 'uniqueID':newBite.uniqueID, 'title':newBite.title});
@@ -280,6 +299,17 @@ let hxlBites = {
 	getMapBites: function(){
 		let self = this;
 		let bites = [];
+		bites = bites.concat(self.getMapBitesMain(self._data,self.timeSeries));
+		if(self.timeSeries){
+			bites = bites.concat(self.getMapBitesMain(self._fullData,false));
+		}
+		return bites;
+	},
+
+	getMapBitesMain: function(data,timeseries){
+
+		let self = this;
+		let bites = [];
 		this._mapBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
@@ -291,7 +321,7 @@ let hxlBites = {
 				if(bite.subType=='point'){
 					var variables = self._getTableVariablesForPoint(self._data,bite,matchingValues);
 				} else {
-					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues);
+					var variables = self._getTableVariablesWithMatching(self._data,bite,matchingValues,timeseries);
 				}
 				let newBites = self._generateMapBite(bite.map,variables);
 				newBites.forEach(function(newBite,i){
@@ -424,8 +454,8 @@ let hxlBites = {
 		}
 		return ingredientValues;
 	},
-
-	_getTableVariablesForPoint: function(data,bite,matchingValues){
+	//this function is overwritten, why? check lat lon is working otherwise delete
+	_getTableVariablesWithMatching: function(data,bite,matchingValues,timeseries = false){
 		let table = [['lat','lon',data[1],data[0]]];
 		matchingValues['lat'][0].values.forEach(function(d,i){
 			let row = [d,matchingValues['lon'][0].values[i],data[i+2]];
@@ -435,10 +465,9 @@ let hxlBites = {
 		return [{'table':table,'uniqueID':uniqueID,'title':bite.title}]
 	},
 
-	_getTableVariablesWithMatching: function(data,bite,matchingValues){
+	_getTableVariablesWithMatching: function(data,bite,matchingValues,timeseries = false){
 
 		//needs large efficieny improvements
-		
 		let self = this;
 		let tables = [];
 		let keyMatches = matchingValues[bite.variables[0]];
@@ -587,6 +616,9 @@ let hxlBites = {
 				idMatches[i].forEach(function(d){
 					uniqueID = uniqueID + '/'+d.tag+'/'+d.col;
 				})
+				if(timeseries){
+					uniqueID+='/timefilter';
+				}				
 				headerMatches[i].forEach(function(header){
 					titleVars.push([header]);
 				});
@@ -1041,7 +1073,8 @@ let hxlBites = {
 
 		var self = this;
 
-		var data = self._data;
+		//var data = self._data;
+		var data = self._fullData;
 
 		//split bite ID into it constituent parts
 		var parts = id.split('/');
@@ -1049,8 +1082,15 @@ let hxlBites = {
 		var biteID = parts[0]
 
 		//if bite is a timeseries then reference the full data rather than data filtered to the latest data
-		if (biteID.substr(0,4)=='time'){
+		/*if (biteID.substr(0,4)=='time'){
 			data = self._fullData;
+		}*/
+
+		//if data is filtered for time then set data to subset.  What if timeseries no longer triggers?
+		let timeFilter = parts[parts.length-1];
+		if(timeFilter == 'timefilter'){
+			data = self._data;
+			parts.pop();
 		}
 
 		//column data in two parts in the unique bite ID.  The original tag and column number
@@ -1133,6 +1173,11 @@ let hxlBites = {
 			//}
 		}
 		newBites.forEach(function(newBite,i){
+			
+			if(timeFilter == 'timefilter'){
+				newBite.uniqueID += '/timefilter';
+			}
+
 			if (biteID.substr(0,4)=='time'){
 				let headers = newBite.bite.slice(0, 1);
 				data = newBite.bite.slice(1,newBite.bite.length);
