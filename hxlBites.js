@@ -141,13 +141,23 @@ let hxlBites = {
 	getTextBites: function(){
 		let self = this;
 		let bites = [];
+		bites = bites.concat(self.getTextBitesMain(self._data,self.timeSeries));
+		if(self.timeSeries){
+			bites = bites.concat(self.getTextBitesMain(self._fullData,false));
+		}
+		return bites;
+	},	
+
+	getTextBitesMain: function(data,timeSeries){
+		let self = this;
+		let bites = [];
 		if(this.timeSeries){
-			bites.push({'type':'text','subtype':'intro','priority':10,'bite':'Data filtered on '+this.timeSeriesFilterHeader+' for '+this.timeSeriesFilter, 'id':'text0000'});
+			bites.push({'type':'text','subtype':'datefilter','priority':10,'bite':'Data filtered on '+this.timeSeriesFilterHeader+' for '+this.timeSeriesFilter, 'id':'text0000'});
 		}
 		this._textBites.forEach(function(bite,i){
 			let distinctOptions = {};
 			bite.ingredients.forEach(function(ingredient){
-				distinctValues = self._getIngredientValues(ingredient,self._data);
+				distinctValues = self._getIngredientValues(ingredient,data);
 				distinctOptions[ingredient.name] = distinctValues;
 			});
 			let matchingValues = self._checkCriteria(bite.criteria,distinctOptions);
@@ -155,7 +165,11 @@ let hxlBites = {
 				let uniqueIDs = []
 				bite.ingredients.forEach(function(ingredient){
 					matchingValues[ingredient.name].forEach(function(match){
-						uniqueIDs.push(bite.id+'/'+match.tag+'/'+match.col);
+						if(timeSeries){
+							uniqueIDs.push(bite.id+'/'+match.tag+'/'+match.col+'/timefilter');
+						} else {
+							uniqueIDs.push(bite.id+'/'+match.tag+'/'+match.col);
+						}
 					})
 				});
 				let variables = self._getVariables(bite,matchingValues);
@@ -624,6 +638,9 @@ let hxlBites = {
 				});
 
 				var titles = self._generateTextBite(bite.title,titleVars);
+				if(timeseries){
+					titles[0] = titles[0] + ' for '+self.timeSeriesFilter;
+				}
 				tables.push({'table':table,'uniqueID':uniqueID,'title':titles[0]});
 			});
 		});
@@ -1176,6 +1193,7 @@ let hxlBites = {
 			
 			if(timeFilter == 'timefilter'){
 				newBite.uniqueID += '/timefilter';
+				newBite.title += ' for '+self.timeSeriesFilter;
 			}
 
 			if (biteID.substr(0,4)=='time'){

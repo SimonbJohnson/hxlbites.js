@@ -211,7 +211,7 @@
       error: function(err){
         console.log(err);
       }
-    });*/
+    });
     $.ajax({
         url: "https://proxy.hxlstandard.org/data.json?force=on&filter01=cut&cut-skip-untagged01=o&url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1JMzLwLWsImzZ9bzbdhNSXd7XcrSW6lbkQsTvhzjLgfc%2Fedit%23gid%3D1800165124",
       success: function(result){
@@ -221,7 +221,7 @@
         console.log(err);
       }
     });
-    /*$.ajax({
+    $.ajax({
         url: "https://proxy.hxlstandard.org/data.json?filter01=cut&cut-skip-untagged01=on&url=https%3A%2F%2Fdata.humdata.org%2Fdataset%2Fa138154a-be9a-464a-bd73-619443f3a9ac%2Fresource%2F6fe01c88-a0c0-4016-a9f1-e8c94228dc14%2Fdownload%2Fsind-in-harms-way-dataset-2017-2019.xlsx",
       success: function(result){
         console.log(hxlBites.data(result).getChartBites());
@@ -249,8 +249,13 @@
       success: function(result){
         console.log(hxlBites.data(result).getChartBites());
         console.log(hxlBites.data(result).getTimeSeriesBites());
+        console.log(hxlBites.data(result).getTextBites());
         console.log(hxlBites.data(result).reverse('chart0009/#adm2+health+name/3/#affected+confirmed+infected/4/timefilter'));
         console.log(hxlBites.data(result).reverse('chart0018/#adm2+health+name/3/#affected+confirmed+infected/4'));
+        console.log(hxlBites.data(result).reverse('text0012/#affected+confirmed+infected/4'));
+        console.log(hxlBites.data(result).reverse('text0012/#affected+confirmed+infected/4/timefilter'));
+        
+
       },
       error: function(err){
         console.log(err);
